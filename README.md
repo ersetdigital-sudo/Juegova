@@ -121,6 +121,10 @@ An order is created the moment a customer presses **Beli Sekarang**, before any 
 | :---: | :---: | :---: |
 | ![Admin dashboard](docs/admin-dashboard.jpg) | ![Admin catalog](docs/admin-catalog.jpg) | ![Admin orders](docs/admin-orders.jpg) |
 
+<div align="center">
+<img src="docs/admin-mobile.jpg" width="300" alt="Admin on mobile" />
+</div>
+
 Available at `/admin`. What can be managed:
 
 | Section | What it controls |
