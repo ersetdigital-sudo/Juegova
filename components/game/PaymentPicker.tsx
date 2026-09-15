@@ -22,7 +22,9 @@ export function PaymentPicker({ methods, selectedId, onSelect }: PaymentPickerPr
           )}
         >
           <p className="text-[13px] font-extrabold">{method.name}</p>
-          <p className="text-[10px] text-slate-500">{method.group}</p>
+          <p className="text-[10px] text-slate-500">
+            {method.type === "qris" ? "Scan QR" : "Transfer"}
+          </p>
         </button>
       ))}
     </div>

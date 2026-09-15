@@ -10,6 +10,7 @@ import { getSiteContent } from "@/lib/content/store";
 import { findGame, getGamePath } from "@/lib/games";
 import { breadcrumbJsonLd, productJsonLd } from "@/lib/json-ld";
 import { createMetadata } from "@/lib/metadata";
+import { listActivePaymentMethods } from "@/lib/payments/store";
 
 interface GamePageProps {
   params: Promise<{ slug: string }>;
@@ -42,7 +43,11 @@ export async function generateMetadata({ params }: GamePageProps): Promise<Metad
 
 export default async function GamePage({ params }: GamePageProps) {
   const { slug } = await params;
-  const content = await getSiteContent();
+  const [content, paymentMethods] = await Promise.all([
+    getSiteContent(),
+    listActivePaymentMethods(),
+  ]);
+
   const game = findGame(content.games, slug);
   if (!game) notFound();
 
@@ -83,6 +88,7 @@ export default async function GamePage({ params }: GamePageProps) {
           reviews={content.gameReviews}
           rating={content.rating}
           trustItems={content.trustItems}
+          paymentMethods={paymentMethods}
         />
       </main>
 

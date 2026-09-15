@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { logoutAction } from "@/app/admin/actions";
 import { Logo } from "@/components/layout/Logo";
 import {
+  CreditCardIcon,
   DashboardIcon,
   ExternalLinkIcon,
   GamepadIcon,
@@ -21,6 +22,7 @@ const NAV = [
   { href: "/admin", label: "Ringkasan", Icon: DashboardIcon },
   { href: "/admin/pesanan", label: "Pesanan", Icon: ReceiptIcon },
   { href: "/admin/katalog", label: "Katalog & Harga", Icon: GamepadIcon },
+  { href: "/admin/pembayaran", label: "Pembayaran", Icon: CreditCardIcon },
   { href: "/admin/banner", label: "Banner Hero", Icon: ImageIcon },
   { href: "/admin/ulasan", label: "Ulasan", Icon: StarIcon },
   { href: "/admin/keunggulan", label: "Keunggulan", Icon: SparklesIcon },

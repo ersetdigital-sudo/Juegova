@@ -8,6 +8,7 @@ import { getSiteContent } from "@/lib/content/store";
 import { createMetadata } from "@/lib/metadata";
 import { buildPaymentInstruction } from "@/lib/payment-instructions";
 import { findOrderByInvoice } from "@/lib/orders/store";
+import { findPaymentMethod } from "@/lib/payments/store";
 
 interface PageProps {
   params: Promise<{ invoice: string }>;
@@ -38,7 +39,10 @@ export default async function PaymentPage({ params }: PageProps) {
 
   if (!order) notFound();
 
-  const instruction = buildPaymentInstruction(order.paymentMethod, order.total);
+  // Metodenya diambil dari data admin, jadi QR / nomor rekeningnya yang terbaru.
+  // Kalau metodenya sudah dihapus, buildPaymentInstruction memberi langkah cadangan.
+  const method = await findPaymentMethod(order.paymentMethodId);
+  const instruction = buildPaymentInstruction(method, order.paymentMethod, order.total);
 
   return (
     <>

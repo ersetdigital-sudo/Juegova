@@ -14,6 +14,7 @@ interface OrderRow {
   item_label: string;
   account_id: string;
   payment_method: string;
+  payment_method_id: string | null;
   subtotal: number;
   fee: number;
   discount: number;
@@ -30,6 +31,7 @@ const toOrder = (row: OrderRow): Order => ({
   itemLabel: row.item_label,
   accountId: row.account_id,
   paymentMethod: row.payment_method,
+  paymentMethodId: row.payment_method_id ?? null,
   subtotal: row.subtotal,
   fee: row.fee,
   discount: row.discount,
@@ -44,6 +46,7 @@ export interface NewOrder {
   itemLabel: string;
   accountId: string;
   paymentMethod: string;
+  paymentMethodId: string | null;
   subtotal: number;
   fee: number;
   discount: number;
@@ -103,6 +106,7 @@ export async function createOrder(input: NewOrder): Promise<Order> {
             item_label: input.itemLabel,
             account_id: input.accountId,
             payment_method: input.paymentMethod,
+            payment_method_id: input.paymentMethodId,
             subtotal: input.subtotal,
             fee: input.fee,
             discount: input.discount,

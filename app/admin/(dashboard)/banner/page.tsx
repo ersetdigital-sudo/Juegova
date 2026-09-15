@@ -7,12 +7,19 @@ import type { HeroSlide } from "@/types";
 export const metadata = { title: "Banner Hero", robots: { index: false, follow: false } };
 
 const SLIDE_FIELDS: FieldDef[] = [
-  { name: "image", label: "Gambar (path atau URL)", type: "text", placeholder: "/images/hero-baru.webp", wide: true },
-  { name: "imageAlt", label: "Alt text", type: "text", wide: true, help: "Wajib deskriptif untuk SEO dan pembaca layar." },
+  {
+    name: "image",
+    label: "Gambar banner",
+    type: "image",
+    placeholder: "/images/hero-baru.webp",
+    sizeFields: { width: "width", height: "height" },
+    help: "Idealnya 2172x724 px. Lebar & tinggi terisi otomatis setelah upload.",
+  },
+  { name: "imageAlt", label: "Alt text", type: "text", help: "Wajib deskriptif untuk SEO dan pembaca layar." },
   { name: "href", label: "Link tujuan", type: "text", placeholder: "/game/mobile-legends" },
   { name: "id", label: "ID unik", type: "text", help: "Boleh apa saja, tapi jangan sama dengan slide lain." },
-  { name: "width", label: "Lebar asli (px)", type: "number" },
-  { name: "height", label: "Tinggi asli (px)", type: "number" },
+  { name: "width", label: "Lebar asli (px)", type: "number", help: "Terisi otomatis dari upload." },
+  { name: "height", label: "Tinggi asli (px)", type: "number", help: "Terisi otomatis dari upload." },
 ];
 
 const EMPTY_SLIDE: HeroSlide = {

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getCatalogSnapshot } from "@/lib/content/catalog";
+import { findPaymentMethod } from "@/lib/payments/store";
 import { calculatePricing } from "@/lib/pricing";
 import type { ActionResult } from "@/types";
 import { createOrder, findOrderByInvoice, updateOrderStatus } from "./store";
@@ -10,7 +11,8 @@ export interface CheckoutInput {
   gameId: string;
   itemLabel: string;
   accountId: string;
-  paymentMethod: string;
+  /** Id metode pembayaran yang dipilih. Nama diambil server dari data metode. */
+  paymentMethodId: string;
 }
 
 export type CheckoutResult =
@@ -20,20 +22,28 @@ export type CheckoutResult =
 /**
  * Membuat pesanan dari data yang dipilih pelanggan.
  *
- * HARGA TIDAK DIKIRIM DARI BROWSER. Yang dikirim cuma id game dan nama nominal,
- * lalu harganya dicari di database. Jadi harga di URL tidak bisa dimanipulasi.
+ * HARGA DAN METODE TIDAK DIKIRIM DARI BROWSER. Yang dikirim cuma id game,
+ * nama nominal, dan id metode — sisanya dicari di database. Jadi keduanya
+ * tidak bisa dimanipulasi lewat request.
  */
 export async function createCheckoutOrder(input: CheckoutInput): Promise<CheckoutResult> {
   const accountId = input.accountId.trim();
   if (!accountId) return { ok: false, message: "User ID wajib diisi." };
 
-  const { games } = await getCatalogSnapshot();
+  const [catalog, payment] = await Promise.all([
+    getCatalogSnapshot(),
+    findPaymentMethod(input.paymentMethodId),
+  ]);
 
-  const game = games.find((entry) => entry.id === input.gameId);
+  const game = catalog.games.find((entry) => entry.id === input.gameId);
   if (!game) return { ok: false, message: "Game tidak ditemukan atau sudah tidak aktif." };
 
   const item = game.items.find((entry) => entry.label === input.itemLabel);
   if (!item) return { ok: false, message: "Nominal tidak ditemukan. Pilih ulang." };
+
+  if (!payment || !payment.isActive) {
+    return { ok: false, message: "Metode pembayaran tidak tersedia. Pilih metode lain." };
+  }
 
   const pricing = calculatePricing(item.price);
 
@@ -43,7 +53,8 @@ export async function createCheckoutOrder(input: CheckoutInput): Promise<Checkou
       gameName: game.name,
       itemLabel: item.label,
       accountId,
-      paymentMethod: input.paymentMethod,
+      paymentMethod: payment.name,
+      paymentMethodId: payment.id,
       ...pricing,
     });
 

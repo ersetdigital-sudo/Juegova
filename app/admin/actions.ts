@@ -9,9 +9,18 @@ import { writeCatalog } from "@/lib/content/catalog";
 import { CONTENT_TAG, getContentSnapshot, saveSiteContent } from "@/lib/content/store";
 import { DEFAULT_CONTENT } from "@/lib/content/defaults";
 import { isSupabaseConfigured, supabaseFetch } from "@/lib/content/config";
+import { isPaymentMethodReady, writePaymentMethods } from "@/lib/payments/store";
 import { updateOrderStatus } from "@/lib/orders/store";
 import { isOrderStatus } from "@/lib/orders/status";
-import type { ActionResult, Game, OrderStatus, SiteContent, TopUpItem } from "@/types";
+import type {
+  ActionResult,
+  Game,
+  OrderStatus,
+  PaymentMethod,
+  PaymentType,
+  SiteContent,
+  TopUpItem,
+} from "@/types";
 
 /** `games` tidak ikut di sini karena katalog disimpan di tabelnya sendiri. */
 const CONTENT_KEYS = new Set(Object.keys(DEFAULT_CONTENT).filter((key) => key !== "games"));
@@ -143,6 +152,83 @@ export async function saveCatalog(games: Game[]): Promise<ActionResult> {
     return {
       ok: false,
       message: error instanceof Error ? error.message : "Gagal menyimpan katalog.",
+    };
+  }
+}
+
+/** Rapikan data metode pembayaran yang datang dari form. */
+function normalizePaymentMethod(raw: unknown): PaymentMethod | null {
+  if (!isPlainObject(raw)) return null;
+
+  const name = text(raw.name).trim();
+  if (!name) return null;
+
+  const type: PaymentType = raw.type === "qris" ? "qris" : "transfer";
+
+  const instructions = Array.isArray(raw.instructions)
+    ? raw.instructions
+        .filter((step): step is string => typeof step === "string")
+        .map((step) => step.trim())
+        .filter(Boolean)
+    : [];
+
+  return {
+    id: text(raw.id).trim() || crypto.randomUUID(),
+    name,
+    type,
+    accountLabel:
+      text(raw.accountLabel).trim() || (type === "qris" ? "QRIS" : "Nomor Tujuan"),
+    accountNumber: text(raw.accountNumber).trim(),
+    accountName: text(raw.accountName).trim(),
+    qrImage: text(raw.qrImage).trim(),
+    logo: text(raw.logo).trim(),
+    instructions,
+    isActive: Boolean(raw.isActive),
+  };
+}
+
+/** Simpan seluruh daftar metode pembayaran. */
+export async function savePaymentMethods(methods: PaymentMethod[]): Promise<ActionResult> {
+  if (!(await isAuthorized())) {
+    return { ok: false, message: "Sesi tidak sah. Silakan login ulang." };
+  }
+
+  if (!Array.isArray(methods)) {
+    return { ok: false, message: "Data metode pembayaran tidak valid." };
+  }
+
+  const normalized = methods
+    .map(normalizePaymentMethod)
+    .filter((method): method is PaymentMethod => method !== null);
+
+  // Metode aktif yang datanya belum lengkap tidak diblokir, tapi dinonaktifkan
+  // otomatis — supaya tidak ada metode setengah jadi yang tampil ke pembeli,
+  // dan admin tetap bisa menyimpan progres tanpa harus mengisi semuanya dulu.
+  const autoDisabled: string[] = [];
+  const prepared = normalized.map((method) => {
+    if (method.isActive && !isPaymentMethodReady(method)) {
+      autoDisabled.push(method.name);
+      return { ...method, isActive: false };
+    }
+    return method;
+  });
+
+  try {
+    await writePaymentMethods(prepared);
+    refreshPublicPages();
+    revalidatePath("/admin/pembayaran");
+
+    if (autoDisabled.length > 0) {
+      return {
+        ok: true,
+        message: `Tersimpan. Dinonaktifkan otomatis karena datanya belum lengkap: ${autoDisabled.join(", ")}.`,
+      };
+    }
+    return { ok: true, message: "Metode pembayaran tersimpan." };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Gagal menyimpan metode pembayaran.",
     };
   }
 }

@@ -40,10 +40,24 @@ export interface HeroSlide {
   height: number;
 }
 
+/** "qris" menampilkan gambar QR, "transfer" menampilkan nomor tujuan. */
+export type PaymentType = "qris" | "transfer";
+
 export interface PaymentMethod {
   id: string;
   name: string;
-  group: string;
+  type: PaymentType;
+  /** Label nomor tujuan, contoh "Nomor Virtual Account BCA" atau "Kode Pembayaran Alfamart". */
+  accountLabel: string;
+  accountNumber: string;
+  accountName: string;
+  /** URL gambar QRIS hasil upload admin. */
+  qrImage: string;
+  /** Logo bank / e-wallet, opsional. */
+  logo: string;
+  /** Langkah cara bayar. Kosong = pakai langkah bawaan sesuai tipe. */
+  instructions: string[];
+  isActive: boolean;
 }
 
 export type AccentVariant = "grad" | "blue" | "amber";
@@ -197,7 +211,10 @@ export interface Order {
   gameName: string;
   itemLabel: string;
   accountId: string;
+  /** Nama metode saat pesanan dibuat — disimpan sebagai snapshot untuk riwayat. */
   paymentMethod: string;
+  /** Metode yang dipilih. Null kalau metodenya sudah dihapus admin. */
+  paymentMethodId: string | null;
   subtotal: number;
   fee: number;
   discount: number;

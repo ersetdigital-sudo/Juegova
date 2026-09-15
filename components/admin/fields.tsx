@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { cx } from "@/lib/cx";
 import type { ActionResult } from "@/types";
+import { ImageUploadField } from "./ImageUploadField";
 
 export type { ActionResult };
 
@@ -10,12 +11,17 @@ export interface FieldDef {
   /** Mendukung dot-path untuk objek bersarang, mis. "contact.email". */
   name: string;
   label: string;
-  type: "text" | "textarea" | "number" | "select" | "toggle";
+  type: "text" | "textarea" | "number" | "select" | "toggle" | "image";
   options?: { value: string; label: string }[];
   placeholder?: string;
   help?: string;
-  /** Field yang butuh lebar penuh, mis. textarea atau deskripsi panjang. */
+  /** Field yang butuh lebar penuh, mis. textarea atau textarea gambar. */
   wide?: boolean;
+  /**
+   * Untuk field gambar: nama field tetangga yang diisi otomatis dari ukuran file
+   * hasil upload, supaya rasio gambarnya tidak perlu diketik manual.
+   */
+  sizeFields?: { width: string; height: string };
 }
 
 type AnyRecord = Record<string, unknown>;
@@ -53,8 +59,18 @@ function FieldInput({
 }: {
   field: FieldDef;
   value: unknown;
-  onChange: (next: unknown) => void;
+  onChange: (next: unknown, meta?: { width: number; height: number }) => void;
 }) {
+  if (field.type === "image") {
+    return (
+      <ImageUploadField
+        value={typeof value === "string" ? value : ""}
+        placeholder={field.placeholder}
+        onChange={(url, meta) => onChange(url, meta)}
+      />
+    );
+  }
+
   if (field.type === "toggle") {
     return (
       <label className="flex items-center gap-2 text-sm text-slate-700">
@@ -132,12 +148,25 @@ export function FieldGrid({
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       {fields.map((field) => (
-        <div key={field.name} className={cx("space-y-1", (field.wide || field.type === "textarea") && "sm:col-span-2")}>
+        <div
+          key={field.name}
+          className={cx(
+            "space-y-1",
+            (field.wide || field.type === "textarea" || field.type === "image") && "sm:col-span-2",
+          )}
+        >
           <label className="block text-xs font-bold text-slate-600">{field.label}</label>
           <FieldInput
             field={field}
             value={getPath(values, field.name)}
-            onChange={(next) => onChange(field.name, next)}
+            onChange={(next, meta) => {
+              onChange(field.name, next);
+              // Ukuran file hasil upload langsung mengisi field lebar/tinggi.
+              if (meta && field.sizeFields && meta.width > 0) {
+                onChange(field.sizeFields.width, meta.width);
+                onChange(field.sizeFields.height, meta.height);
+              }
+            }}
           />
           {field.help && field.type !== "toggle" ? (
             <p className="text-[11px] text-slate-400">{field.help}</p>

@@ -109,7 +109,7 @@ export function CheckoutPanel({
           <PaymentInstructions
             paymentName={paymentName}
             instruction={instruction}
-            qrSeed={`${invoice}${pricing.total}`}
+            total={pricing.total}
           />
 
           <OrderDetails

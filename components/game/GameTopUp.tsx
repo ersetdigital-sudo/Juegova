@@ -4,10 +4,9 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { InfoIcon } from "@/components/ui/Icon";
 import { TrustList } from "@/components/ui/TrustList";
-import { PAYMENT_METHODS } from "@/data/payments";
 import { formatRupiah } from "@/lib/format";
 import { createCheckoutOrder } from "@/lib/orders/actions";
-import type { Game, GameReview, SiteRating, TrustItem } from "@/types";
+import type { Game, GameReview, PaymentMethod, SiteRating, TrustItem } from "@/types";
 import { GameInfo } from "./GameInfo";
 import { GameReviews } from "./GameReviews";
 import { NominalPicker } from "./NominalPicker";
@@ -24,9 +23,18 @@ interface GameTopUpProps {
   reviews: GameReview[];
   rating: SiteRating;
   trustItems: TrustItem[];
+  /** Hanya metode pembayaran aktif, diatur admin dari dashboard. */
+  paymentMethods: PaymentMethod[];
 }
 
-export function GameTopUp({ game, steps, reviews, rating, trustItems }: GameTopUpProps) {
+export function GameTopUp({
+  game,
+  steps,
+  reviews,
+  rating,
+  trustItems,
+  paymentMethods,
+}: GameTopUpProps) {
   const router = useRouter();
   const [userId, setUserId] = useState("");
   const [zone, setZone] = useState("");
@@ -36,7 +44,7 @@ export function GameTopUp({ game, steps, reviews, rating, trustItems }: GameTopU
   const [pending, startTransition] = useTransition();
 
   const selectedItem = itemIndex === null ? null : game.items[itemIndex];
-  const selectedPayment = PAYMENT_METHODS.find((method) => method.id === paymentId) ?? null;
+  const selectedPayment = paymentMethods.find((method) => method.id === paymentId) ?? null;
   const zoneSuffix = game.needsZone && zone.trim() ? ` (${zone.trim()})` : "";
 
   const handleBuy = () => {
@@ -57,12 +65,12 @@ export function GameTopUp({ game, steps, reviews, rating, trustItems }: GameTopU
     setError(null);
 
     startTransition(async () => {
-      // Harga diambil server dari database, bukan dikirim dari browser.
+      // Harga dan nama metode diambil server dari database, bukan dari browser.
       const result = await createCheckoutOrder({
         gameId: game.id,
         itemLabel: selectedItem.label,
         accountId: `${userId.trim()}${zoneSuffix}`,
-        paymentMethod: selectedPayment.name,
+        paymentMethodId: selectedPayment.id,
       });
 
       if (!result.ok) {
@@ -132,14 +140,20 @@ export function GameTopUp({ game, steps, reviews, rating, trustItems }: GameTopU
         </StepCard>
 
         <StepCard step={3} title="Metode Pembayaran">
-          <PaymentPicker
-            methods={PAYMENT_METHODS}
-            selectedId={paymentId}
-            onSelect={(id) => {
-              setPaymentId(id);
-              setError(null);
-            }}
-          />
+          {paymentMethods.length === 0 ? (
+            <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-700">
+              Belum ada metode pembayaran yang aktif. Hubungi CS lewat halaman Bantuan.
+            </p>
+          ) : (
+            <PaymentPicker
+              methods={paymentMethods}
+              selectedId={paymentId}
+              onSelect={(id) => {
+                setPaymentId(id);
+                setError(null);
+              }}
+            />
+          )}
         </StepCard>
 
         <GameInfo game={game} steps={steps} />
