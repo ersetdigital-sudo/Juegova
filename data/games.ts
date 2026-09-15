@@ -179,6 +179,96 @@ export const GAMES: Game[] = [
       { label: "VP Starter", price: 30000 },
     ],
   },
+  {
+    id: "magic-chess",
+    name: "Magic Chess: Go Go",
+    cardTitle: "Magic Chess",
+    publisher: "Moonton",
+    currency: "Diamond",
+    category: "casual",
+    image:
+      "https://res.cloudinary.com/dfxc4ceya/image/upload/v1789468872/juegova/games/e7w8bmfrywjtooxvydri.png",
+    imageWidth: ART_WIDTH,
+    imageHeight: ART_HEIGHT,
+    imageAlt: "Sampul game Magic Chess: Go Go",
+    needsZone: true,
+    idHint:
+      "Buka game → tap avatar di pojok kiri atas untuk membuka halaman informasi dasar. User ID dan Zone ID tampil di sana.",
+    description:
+      "Magic Chess: Go Go adalah game auto-battler dari Moonton. Top up Diamond untuk membeli hero, papan, dan Weekly Pass langsung ke akunmu.",
+    // Harga acuan Codashop Indonesia, 15 Sep 2026.
+    items: [
+      { label: "5 Diamond", price: 1596 },
+      { label: "12 Diamond", price: 3511 },
+      { label: "28 Diamond", price: 7980 },
+      { label: "44 Diamond", price: 12768 },
+      { label: "85 Diamond", price: 24578 },
+      { label: "170 Diamond", price: 49157 },
+      { label: "296 Diamond", price: 81715 },
+      { label: "Weekly Pass", price: 31920 },
+      { label: "568 Diamond", price: 160558 },
+    ],
+  },
+  {
+    id: "honor-of-kings",
+    name: "Honor of Kings",
+    cardTitle: "Honor of Kings",
+    publisher: "Tencent / TiMi Studio",
+    currency: "Token",
+    category: "moba",
+    image:
+      "https://res.cloudinary.com/dfxc4ceya/image/upload/v1789468873/juegova/games/qjk0hmk1zrgejxsfmuz0.png",
+    imageWidth: ART_WIDTH,
+    imageHeight: ART_HEIGHT,
+    imageAlt: "Sampul game Honor of Kings",
+    needsZone: false,
+    idHint:
+      "Masukkan Player ID Honor of Kings kamu. ID-nya bisa dilihat di halaman profil di dalam game.",
+    description:
+      "Honor of Kings adalah game MOBA 5v5 dari TiMi Studio. Top up Token untuk membeli hero, skin, dan battle pass langsung ke akunmu.",
+    // Harga acuan Codashop Indonesia, 15 Sep 2026.
+    items: [
+      { label: "16 Token", price: 3800 },
+      { label: "80 Token", price: 18400 },
+      { label: "240 Token", price: 56000 },
+      { label: "400 Token", price: 93000 },
+      { label: "560 Token", price: 130000 },
+      { label: "830 Token", price: 186000 },
+      { label: "1245 Token", price: 279000 },
+      { label: "2508 Token", price: 558000 },
+      { label: "4180 Token", price: 919000 },
+    ],
+  },
+  {
+    id: "roblox",
+    name: "Roblox",
+    cardTitle: "Roblox",
+    publisher: "Roblox Corporation",
+    currency: "Robux",
+    category: "casual",
+    image:
+      "https://res.cloudinary.com/dfxc4ceya/image/upload/v1789468874/juegova/games/risy29bl42g2a5x9bsri.png",
+    imageWidth: ART_WIDTH,
+    imageHeight: ART_HEIGHT,
+    imageAlt: "Sampul game Roblox",
+    needsZone: false,
+    idHint:
+      "Masukkan username Roblox kamu dengan benar. Robux tidak bisa dibatalkan setelah masuk ke akun.",
+    description:
+      "Roblox adalah platform game buatan pengguna dengan jutaan pengalaman. Top up Robux untuk membeli item avatar, game pass, dan akses premium.",
+    // Harga pasar acuan itemku, 15 Sep 2026.
+    items: [
+      { label: "100 Robux", price: 27200 },
+      { label: "400 Robux", price: 72650 },
+      { label: "800 Robux", price: 139499 },
+      { label: "1000 Robux", price: 168950 },
+      { label: "1700 Robux", price: 289900 },
+      { label: "2000 Robux", price: 340000 },
+      { label: "2500 Robux", price: 417490 },
+      { label: "3600 Robux", price: 600000 },
+      { label: "4500 Robux", price: 754990 },
+    ],
+  },
 ];
 
 /** Langkah "Cara Top Up" yang tampil di semua halaman game. */
