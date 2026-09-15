@@ -327,7 +327,6 @@ middleware.ts               legacy /game?id= → /game/[slug] redirect
 ## Placeholders & roadmap
 
 - **Payment gateway.** QRIS codes and account numbers are real and uploaded by the admin, but nothing verifies a payment automatically — orders are recorded and statuses are managed manually. Because of that there are no customer accounts: buyers track a purchase with their Order ID on `/cek-transaksi` instead of logging in.
-- **Newsletter.** The form reports success locally; no endpoint is wired up.
 - **WhatsApp.** The dashboard can store a support number, but nothing on the site links to it yet.
 
 ## Author

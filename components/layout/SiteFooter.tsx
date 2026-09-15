@@ -5,7 +5,6 @@ import { activeSocials, socialPlatformLabel } from "@/data/social";
 import { cx } from "@/lib/cx";
 import type { NavigationContent, SiteSettings } from "@/types";
 import { Logo } from "./Logo";
-import { NewsletterForm } from "./NewsletterForm";
 
 const SOCIAL_CLASS =
   "flex h-7 w-7 items-center justify-center rounded-full bg-white border border-slate-200";
@@ -13,7 +12,7 @@ const SOCIAL_CLASS =
 interface SiteFooterProps {
   settings: SiteSettings;
   navigation: NavigationContent;
-  /** full = beranda (4 kolom), compact = halaman game & pembayaran. */
+  /** full = beranda (3 kolom), compact = halaman game & pembayaran. */
   variant?: "full" | "compact";
 }
 
@@ -53,18 +52,10 @@ export function SiteFooter({ settings, navigation, variant = "full" }: SiteFoote
 
   return (
     <footer id="bantuan" className="mt-14 bg-slate-50 border-t border-slate-200">
-      <div className="max-w-[1280px] mx-auto px-4 lg:px-6 py-10 grid md:grid-cols-4 gap-8">
+      <div className="max-w-[1280px] mx-auto px-4 lg:px-6 py-10 grid md:grid-cols-3 gap-8">
         <div>
           <Logo name={settings.name} gradientId="logo-footer" asLink={false} />
           <p className="mt-3 text-xs text-slate-500">{settings.tagline}.</p>
-        </div>
-
-        <div>
-          <p className="text-sm font-extrabold">Dapatkan Info Promo Terbaru</p>
-          <p className="text-xs text-slate-500 mt-1">
-            Langganan newsletter dan jangan lewatkan promo menarik.
-          </p>
-          <NewsletterForm />
         </div>
 
         <div>
