@@ -231,6 +231,12 @@ Source artwork was 19.1 MB of PNG. As WebP it is **1.7 MB** (−91%) with no vis
 
 Fonts load through `next/font/local`, and only the weights present in the markup are declared.
 
+### Transaction lookup
+
+- `/cek-transaksi` looks up a single order by Order ID — no account needed. It only ever shows the order that was searched, never a list of other transactions.
+- The form is a plain GET, so it works without JavaScript and a result can be shared by URL. A search result is `noindex`, because the URL then carries someone's order data. The empty page itself is indexable and listed in the sitemap.
+- Status wording is perspective-aware: the dashboard says `dibayar` is "Sudah dibayar", while the customer sees "Sedang Diproses" — they have flagged a payment, but the admin has not verified it yet.
+
 ## Tech stack
 
 | Layer | Choice |
@@ -288,6 +294,7 @@ app/
   page.tsx                  home
   game/[slug]/page.tsx      game detail (SSG, generateStaticParams)
   pembayaran/[invoice]/     checkout for one order (dynamic, noindex)
+  cek-transaksi/            look up one order by Order ID
   admin/
     login/                  login page (no shell, no guard)
     (dashboard)/            sidebar shell + auth guard, all editors
@@ -311,8 +318,7 @@ middleware.ts               legacy /game?id= → /game/[slug] redirect
 
 ## Placeholders & roadmap
 
-- **Payment gateway.** QRIS codes and account numbers are real and uploaded by the admin, but nothing verifies a payment automatically — orders are recorded and statuses are managed manually.
-- **Customer accounts.** The Login and Register buttons in the header are still inert; orders are not tied to a user.
+- **Payment gateway.** QRIS codes and account numbers are real and uploaded by the admin, but nothing verifies a payment automatically — orders are recorded and statuses are managed manually. Because of that there are no customer accounts: buyers track a purchase with their Order ID on `/cek-transaksi` instead of logging in.
 - **Newsletter.** The form reports success locally; no endpoint is wired up.
 - **WhatsApp.** The dashboard can store a support number, but nothing on the site links to it yet.
 
