@@ -31,6 +31,12 @@ export function GameEditor({ games, gameIndex, categories, action }: GameEditorP
   if (!game) return null;
 
   const gameFields: FieldDef[] = [
+    {
+      name: "isActive",
+      label: "Tampilkan di situs",
+      type: "toggle",
+      help: "Kalau dimatikan, game ini hilang dari beranda, daftar game, dan pencarian. Datanya tetap tersimpan di sini lengkap dengan harga, jadi bisa dinyalakan lagi kapan saja.",
+    },
     { name: "name", label: "Nama lengkap", type: "text", help: "Dipakai untuk judul halaman & breadcrumb." },
     { name: "cardTitle", label: "Nama di kartu", type: "text", help: "Versi pendek untuk kartu di beranda." },
     { name: "publisher", label: "Publisher", type: "text" },

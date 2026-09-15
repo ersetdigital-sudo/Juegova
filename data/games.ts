@@ -30,6 +30,7 @@ export const GAMES: Game[] = [
       "Buka game → tap avatar di kiri atas → User ID dan Server ID ada di bawah nama kamu (contoh: 123456789 (2001)).",
     description:
       "Mobile Legends: Bang Bang adalah game MOBA 5v5 paling populer di Indonesia. Top up Diamond untuk membeli skin, hero, Starlight Member, dan battle pass langsung ke akunmu.",
+    isActive: true,
     items: [
       { label: "5 Diamond", price: 1500 },
       { label: "12 Diamond", price: 3500 },
@@ -57,6 +58,7 @@ export const GAMES: Game[] = [
     idHint: "Buka Free Fire → tap foto profil → User ID tampil di bawah nickname kamu.",
     description:
       "Free Fire adalah game battle royale 10 menit dengan 50 pemain. Top up Diamond untuk bundle, karakter, senjata, dan Membership Mingguan/Bulanan.",
+    isActive: true,
     items: [
       { label: "5 Diamond", price: 1000 },
       { label: "50 Diamond", price: 7000 },
@@ -85,6 +87,7 @@ export const GAMES: Game[] = [
       "Buka PUBG Mobile → menu profil → Character ID (angka panjang) ada di bawah nama kamu.",
     description:
       "PUBG Mobile adalah battle royale 100 pemain dengan grafis realistis. Top up UC untuk Royale Pass, crate, skin senjata, dan outfit eksklusif.",
+    isActive: true,
     items: [
       { label: "60 UC", price: 15000 },
       { label: "325 UC", price: 75000 },
@@ -113,6 +116,7 @@ export const GAMES: Game[] = [
       "Buka Paimon Menu → UID ada di pojok kanan bawah layar. Pilih server sesuai akunmu (Asia/America/Europe/TW-HK-MO).",
     description:
       "Genshin Impact adalah action RPG open-world dengan sistem elemen. Top up Genesis Crystal untuk wish, Blessing of the Welkin Moon, dan Battle Pass.",
+    isActive: true,
     items: [
       { label: "60 Crystal", price: 16000 },
       { label: "330 Crystal", price: 79000 },
@@ -140,6 +144,7 @@ export const GAMES: Game[] = [
     idHint: "Buka Phone Menu → UID tampil di pojok kiri bawah. Pilih server sesuai akunmu.",
     description:
       "Honkai: Star Rail adalah RPG turn-based petualangan antargalaksi. Top up Oneiric Shard untuk warp, Express Supply Pass, dan Nameless Honor.",
+    isActive: true,
     items: [
       { label: "60 Shard", price: 16000 },
       { label: "300 Shard", price: 79000 },
@@ -167,6 +172,7 @@ export const GAMES: Game[] = [
     idHint: "Masukkan Riot ID lengkap beserta tagline, contoh: Juegova#ID1.",
     description:
       "Valorant adalah tactical shooter 5v5 dengan agent berkemampuan unik. Top up VP untuk skin bundle, battle pass, dan agent contract.",
+    isActive: true,
     items: [
       { label: "125 VP", price: 15000 },
       { label: "420 VP", price: 50000 },
@@ -197,6 +203,7 @@ export const GAMES: Game[] = [
     description:
       "Magic Chess: Go Go adalah game auto-battler dari Moonton. Top up Diamond untuk membeli hero, papan, dan Weekly Pass langsung ke akunmu.",
     // Harga acuan Codashop Indonesia, 15 Sep 2026.
+    isActive: true,
     items: [
       { label: "5 Diamond", price: 1596 },
       { label: "12 Diamond", price: 3511 },
@@ -227,6 +234,7 @@ export const GAMES: Game[] = [
     description:
       "Honor of Kings adalah game MOBA 5v5 dari TiMi Studio. Top up Token untuk membeli hero, skin, dan battle pass langsung ke akunmu.",
     // Harga acuan Codashop Indonesia, 15 Sep 2026.
+    isActive: true,
     items: [
       { label: "16 Token", price: 3800 },
       { label: "80 Token", price: 18400 },
@@ -257,6 +265,7 @@ export const GAMES: Game[] = [
     description:
       "Roblox adalah platform game buatan pengguna dengan jutaan pengalaman. Top up Robux untuk membeli item avatar, game pass, dan akses premium.",
     // Harga pasar acuan itemku, 15 Sep 2026.
+    isActive: true,
     items: [
       { label: "100 Robux", price: 27200 },
       { label: "400 Robux", price: 72650 },

@@ -33,6 +33,7 @@ export function NewGameButton({ games, categories, action }: NewGameButtonProps)
       needsZone: false,
       idHint: "",
       description: "",
+      isActive: true,
       items: [{ label: "5 Diamond", price: 1000 }],
     };
 

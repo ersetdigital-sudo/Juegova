@@ -20,6 +20,7 @@ interface GameRow {
   needs_zone: boolean;
   id_hint: string;
   description: string;
+  is_active: boolean;
   sort_order: number;
 }
 
@@ -44,6 +45,8 @@ const toGame = (row: GameRow, items: ItemRow[]): Game => ({
   needsZone: row.needs_zone,
   idHint: row.id_hint,
   description: row.description,
+  // Baris lama yang belum punya nilai dianggap aktif.
+  isActive: row.is_active !== false,
   items: items.map((item) => ({ label: item.label, price: item.price })),
 });
 
@@ -106,6 +109,16 @@ export async function readCatalog(): Promise<Game[]> {
   return (await getCatalogSnapshot()).games;
 }
 
+/**
+ * Hanya game yang aktif — dipakai seluruh halaman publik.
+ *
+ * Game nonaktif tetap ada di dashboard lengkap dengan harga dan pengaturannya,
+ * jadi admin tinggal menyalakan lagi tanpa menyusun ulang dari nol.
+ */
+export async function readActiveCatalog(): Promise<Game[]> {
+  return (await getCatalogSnapshot()).games.filter((game) => game.isActive);
+}
+
 async function writeToSupabase(games: Game[]) {
   // Ganti utuh katalognya: cukup untuk satu admin, dan menghindari
   // perbedaan antara daftar di form dan isi tabel.
@@ -123,6 +136,7 @@ async function writeToSupabase(games: Game[]) {
     needs_zone: game.needsZone,
     id_hint: game.idHint,
     description: game.description,
+    is_active: game.isActive,
     sort_order: index,
     updated_at: new Date().toISOString(),
   }));

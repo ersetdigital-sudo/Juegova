@@ -137,6 +137,17 @@ export function StarIcon({ className }: IconProps) {
  * dipakai untuk ikon yang dipilih dari dashboard (fitur, badge, trust item).
  */
 
+export function EyeOffIcon({ className }: IconProps) {
+  return (
+    <Svg className={className}>
+      <path d="M10.6 5.2A10.6 10.6 0 0 1 12 5.1c5 0 9 4.4 9 6.9 0 .8-.4 1.8-1.1 2.8" />
+      <path d="M6.5 7.2C4.3 8.6 3 10.5 3 12c0 2.5 4 6.9 9 6.9 1.6 0 3.1-.5 4.4-1.2" />
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+      <path d="M3.5 3.5l17 17" />
+    </Svg>
+  );
+}
+
 export function CreditCardIcon({ className }: IconProps) {
   return (
     <Svg className={className}>

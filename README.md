@@ -147,7 +147,7 @@ Available at `/admin`. What can be managed:
 | Section | What it controls |
 | --- | --- |
 | **Pesanan** | Orders with filters per status, revenue total, per-order detail and status changes. |
-| **Katalog & Harga** | Games and every denomination/price. Add, reorder or delete games and price tiers. Upload cover art. |
+| **Katalog & Harga** | Games and every denomination/price. Add, reorder or delete games and price tiers. Upload cover art, or hide a game without deleting it. |
 | **Pembayaran** | Payment methods: upload the QRIS image, set account numbers, write instructions, reorder, activate/deactivate. |
 | **Banner Hero** | The home page slider — image upload, alt text, link and order. |
 | **Ulasan** | Overall rating, home testimonials, game-page reviews. |
@@ -172,6 +172,14 @@ Payment methods are fully data-driven — nothing about them lives in code.
 - The admin uploads the QRIS image straight from the dashboard, fills the account number and holder name, writes custom "how to pay" steps (or leaves them empty to use generated defaults), and toggles the method on or off.
 - **Only active methods reach the buyer**, and an active method with missing data is disabled automatically on save rather than being allowed to break the checkout. The dashboard says which ones that happened to.
 - Orders reference the method by id, and the name is stored as a snapshot, so renaming or deleting a method never corrupts an old order.
+
+### Hiding a game
+
+Every game carries an `is_active` flag, toggled from "Tampilkan di situs" in the game editor. A hidden game keeps all of its data — artwork, description, every price — but disappears from the home page, the catalog grid, the category chips, the header search, the sitemap and its own `/game/[slug]` URL, which returns a 404.
+
+This exists so a game can be taken off sale without deleting it and re-entering nine price tiers later. The dashboard lists hidden games dimmed and greyed with a "Disembunyikan" badge, and the page header counts them.
+
+Category chips are derived from the games that are actually visible, so hiding the only shooter removes the Shooter chip rather than leaving it clickable and empty. Checkout re-reads the active catalog server-side, so a hidden game cannot be ordered even from a page left open in a browser.
 
 ### Image uploads
 

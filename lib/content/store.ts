@@ -2,7 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { unstable_cache } from "next/cache";
 import { DEFAULT_CONTENT } from "./defaults";
-import { getCatalogSnapshot } from "./catalog";
+import { readActiveCatalog } from "./catalog";
 import { errorMessage, isSupabaseConfigured, supabaseFetch, supabaseConfig } from "./config";
 import type { SiteContent, StorageDriver } from "@/types";
 
@@ -122,8 +122,9 @@ export async function saveSiteContent(content: SiteContent): Promise<StorageDriv
  */
 export const getSiteContent = unstable_cache(
   async (): Promise<SiteContent> => {
-    const [content, catalog] = await Promise.all([getContentSnapshot(), getCatalogSnapshot()]);
-    return { ...content.content, games: catalog.games };
+    const [content, games] = await Promise.all([getContentSnapshot(), readActiveCatalog()]);
+    // Hanya game aktif yang sampai ke halaman publik.
+    return { ...content.content, games };
   },
   ["site-content"],
   { tags: [CONTENT_TAG] },

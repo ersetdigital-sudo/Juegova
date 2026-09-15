@@ -28,6 +28,12 @@ export interface Game {
   /** Petunjuk letak User ID di dalam game. */
   idHint: string;
   description: string;
+  /**
+   * Game nonaktif tetap tersimpan di dashboard (harga dan pengaturannya utuh)
+   * tapi tidak tampil di situs publik. Dipakai untuk menyembunyikan game
+   * sementara tanpa menghapus datanya.
+   */
+  isActive: boolean;
   items: TopUpItem[];
 }
 

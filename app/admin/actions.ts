@@ -119,6 +119,8 @@ function normalizeGame(raw: unknown): Game | null {
     imageAlt: text(raw.imageAlt, `Sampul game ${name}`).trim(),
     needsZone: Boolean(raw.needsZone),
     idHint: text(raw.idHint).trim(),
+    // Tidak diisi dianggap aktif, jadi game lama tetap tampil setelah pembaruan ini.
+    isActive: raw.isActive !== false,
     description: text(raw.description).trim(),
     items: normalizedItems,
   };

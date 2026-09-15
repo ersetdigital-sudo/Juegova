@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getCatalogSnapshot } from "@/lib/content/catalog";
+import { readActiveCatalog } from "@/lib/content/catalog";
 import { findPaymentMethod } from "@/lib/payments/store";
 import { calculatePricing } from "@/lib/pricing";
 import type { ActionResult } from "@/types";
@@ -30,12 +30,14 @@ export async function createCheckoutOrder(input: CheckoutInput): Promise<Checkou
   const accountId = input.accountId.trim();
   if (!accountId) return { ok: false, message: "User ID wajib diisi." };
 
-  const [catalog, payment] = await Promise.all([
-    getCatalogSnapshot(),
+  // Katalog aktif saja: game yang dinonaktifkan admin tidak bisa dipesan,
+  // meski halamannya masih terbuka di browser pembeli.
+  const [games, payment] = await Promise.all([
+    readActiveCatalog(),
     findPaymentMethod(input.paymentMethodId),
   ]);
 
-  const game = catalog.games.find((entry) => entry.id === input.gameId);
+  const game = games.find((entry) => entry.id === input.gameId);
   if (!game) return { ok: false, message: "Game tidak ditemukan atau sudah tidak aktif." };
 
   const item = game.items.find((entry) => entry.label === input.itemLabel);
