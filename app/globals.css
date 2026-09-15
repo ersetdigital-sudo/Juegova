@@ -89,8 +89,13 @@ h3,
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  /*
+   * Marquee tetap berjalan, hanya diperlambat. Mematikannya membuat strip ini
+   * tampak rusak/statis di mesin yang mematikan animasi OS — dan itu memang
+   * yang terjadi. Diperlambat ~2x sebagai kompromi; jeda saat hover tetap ada.
+   */
   .marquee-track {
-    animation: none;
+    animation-duration: 56s;
   }
 
   /*

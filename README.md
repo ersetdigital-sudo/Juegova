@@ -242,6 +242,7 @@ That caught five real defects:
 - The rating row carries a single `role="img"` label instead of reading "star star star star star".
 - Carousel, search, filters and modal are keyboard operable, with `aria-current`, `aria-pressed` and `aria-expanded` set.
 - The home and checkout pages had **no `<h1>` at all** in the original markup. Each now has exactly one, visually hidden so the design is untouched.
+- The "Game Populer" marquee **keeps moving** under `prefers-reduced-motion`, at roughly half speed (56s instead of 28s). Disabling it outright — the usual reflex — made the strip look broken to anyone whose OS turns animations off, which is a common performance tweak and not always an accessibility choice. Hover still pauses the track, which is what WCAG 2.2.2 actually requires.
 
 ### Assets
 
