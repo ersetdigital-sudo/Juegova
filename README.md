@@ -220,7 +220,9 @@ Login is **off until you turn it on**. Set `ADMIN_PASSWORD` and `/admin` immedia
 
 Game pages live at `/game/[slug]` and are **statically prerendered** via `generateStaticParams`. The checkout page reads its order from Postgres and is rendered on demand; the dashboard is `force-dynamic`, because a cached admin view would show stale prices.
 
-The original site used `/game?id=xxx`. Those URLs are still live in the wild, so `middleware.ts` issues a `308` to the clean path. Redirects in `next.config` were not usable here: Next always carries the source query string into the destination, which produced `/game/valorant?id=valorant`. Middleware can strip just the `id` parameter while preserving analytics parameters such as `utm_source`.
+> **Clearing catalog data means clearing `.next`.** Catalog reads go through a persistent cache in `.next/cache`, and `generateStaticParams` runs against it at build time. Change a game's visibility, add or delete one, and a plain rebuild will happily reuse the previous catalog — the new game 404s, and the old ones keep their prerendered pages and sitemap entries. Delete `.next` before rebuilding whenever the catalog itself changes. This has bitten twice.
+
+The original site used `/game?id=xxx`. Those URLs are still live in the wild, so `middleware.ts` issues a `308` to the clean path. Redirects in `next.config` were not usable here: Next always carries the source query string into the destination, which produced `/game/roblox?id=roblox`. Middleware can strip just the `id` parameter while preserving analytics parameters such as `utm_source`.
 
 ### Verifying a migration instead of eyeballing it
 

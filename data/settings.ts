@@ -8,7 +8,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   legalName: "Juegova.net",
   tagline: "Top Up Game, Lebih Seru Setiap Hari",
   description:
-    "Top up game favoritmu di Juegova — proses instan, aman, dan harga terbaik untuk Mobile Legends, Free Fire, PUBG Mobile, Genshin Impact, Honkai: Star Rail, dan Valorant.",
+    "Top up game favoritmu di Juegova — proses instan, aman, dan harga terbaik untuk Mobile Legends, Free Fire, PUBG Mobile, Genshin Impact, Magic Chess: Go Go, Honor of Kings, dan Roblox.",
   slogan: "#LevelUpBersamaJuegova",
   footerNote: "Dibuat untuk Gamers, oleh Gamers",
   themeColor: "#1d4ed8",
