@@ -1,0 +1,30 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+*.tsbuildinfo
+
+# env files
+.env*
+!.env.example
+
+# tools / editor lokal
+.commandcode/
+.vscode/
+.idea/
+
+# Sumber statis asli (HTML + aset mentah) — hanya referensi lokal, tidak ikut repo.
+# Aset yang dipakai aplikasi ada di public/ dalam bentuk WebP yang sudah dioptimasi.
+/pages
+/images
+/fonts
