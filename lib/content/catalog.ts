@@ -91,9 +91,10 @@ export async function getCatalogSnapshot(): Promise<CatalogSnapshot> {
       // Tabel masih kosong: pakai isi lokal/awal sampai admin menyimpan.
       return { games: fallback ?? GAMES, error: null };
     } catch (error) {
+      console.error("[katalog] gagal dibaca:", errorMessage(error));
       return {
         games: fallback ?? GAMES,
-        error: `Gagal membaca katalog dari Supabase: ${errorMessage(error)}`,
+        error: "Katalog gagal dimuat dari penyimpanan.",
       };
     }
   }
@@ -177,7 +178,7 @@ export async function writeCatalog(games: Game[]): Promise<void> {
     await writeToFile(games);
   } catch {
     throw new Error(
-      "Filesystem di server ini read-only. Sambungkan Supabase supaya perubahan katalog bisa disimpan.",
+      "Perubahan tidak bisa disimpan di server ini. Hubungi pengembang untuk mengaktifkan penyimpanan permanen.",
     );
   }
 }

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { saveCatalog } from "@/app/admin/actions";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { GameEditor } from "@/components/admin/GameEditor";
 import { getCatalogSnapshot } from "@/lib/content/catalog";
 import { getContentSnapshot } from "@/lib/content/store";
@@ -19,17 +20,13 @@ export default async function AdminGameDetailPage({ params }: PageProps) {
 
   return (
     <>
-      <header>
-        <h1 className="text-lg font-extrabold text-slate-900">Kelola game</h1>
-        <p className="mt-1 text-xs text-slate-500">
-          Tersimpan ke tabel <code className="rounded bg-slate-100 px-1">games</code> dan{" "}
-          <code className="rounded bg-slate-100 px-1">game_items</code>. Perubahan langsung dipakai
-          halaman publik setelah disimpan.
-        </p>
-      </header>
+      <AdminPageHeader
+        title="Kelola game"
+        description="Ubah informasi game, nominal, dan harga. Perubahan langsung dipakai halaman publik setelah disimpan."
+      />
 
       {catalog.error ? (
-        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">
+        <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3.5 text-xs text-rose-700">
           {catalog.error}
         </p>
       ) : null}

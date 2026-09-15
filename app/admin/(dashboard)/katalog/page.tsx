@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { saveCatalog } from "@/app/admin/actions";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { NewGameButton } from "@/components/admin/NewGameButton";
 import { getContentSnapshot } from "@/lib/content/store";
 import { getCatalogSnapshot } from "@/lib/content/catalog";
@@ -15,31 +16,30 @@ export default async function AdminCatalogPage() {
 
   return (
     <>
-      <header className="flex flex-wrap items-center gap-3">
-        <div className="mr-auto">
-          <h1 className="text-lg font-extrabold text-slate-900">Katalog &amp; Harga</h1>
-          <p className="mt-1 text-xs text-slate-500">
-            {games.length} game terdaftar di tabel <code className="rounded bg-slate-100 px-1">games</code>{" "}
-            dan{" "}
-            <code className="rounded bg-slate-100 px-1">
-              {games.reduce((sum, game) => sum + game.items.length, 0)}
-            </code>{" "}
-            baris harga di tabel <code className="rounded bg-slate-100 px-1">game_items</code>.
-          </p>
-        </div>
-        <NewGameButton games={games} categories={content.content.categories} action={saveCatalog} />
-      </header>
+      <AdminPageHeader
+        title="Katalog & Harga"
+        description={`${games.length} game dengan total ${games.reduce(
+          (sum, game) => sum + game.items.length,
+          0,
+        )} nominal. Klik “Kelola” untuk mengubah informasi game, nominal, dan harganya.`}
+        action={
+          <NewGameButton games={games} categories={content.content.categories} action={saveCatalog} />
+        }
+      />
 
       {catalog.error ? (
-        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">
+        <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3.5 text-xs text-rose-700">
           {catalog.error}
         </p>
       ) : null}
 
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <ul className="divide-y divide-slate-100">
           {games.map((game) => (
-            <li key={game.id} className="flex flex-wrap items-center gap-3 px-5 py-4">
+            <li
+              key={game.id}
+              className="flex flex-wrap items-center gap-3 px-5 py-4 transition-colors hover:bg-slate-50/70"
+            >
               <Image
                 src={game.image}
                 alt={game.imageAlt || game.name}

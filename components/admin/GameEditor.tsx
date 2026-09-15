@@ -8,8 +8,6 @@ import type { ActionResult, FieldDef } from "@/components/admin/fields";
 import type { Game, GameCategory } from "@/types";
 import { FieldGrid, Panel, SaveButton, StatusText } from "./fields";
 
-type AnyRecord = Record<string, unknown>;
-
 const ITEM_FIELDS: FieldDef[] = [
   { name: "label", label: "Nama nominal", type: "text", placeholder: "86 Diamond" },
   { name: "price", label: "Harga (Rupiah)", type: "number", placeholder: "22000" },
@@ -92,7 +90,7 @@ export function GameEditor({ games, gameIndex, categories, action }: GameEditorP
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4">
+      <div className="flex items-center gap-4 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <Image
           src={game.image}
           alt={game.imageAlt || game.name}
@@ -118,7 +116,11 @@ export function GameEditor({ games, gameIndex, categories, action }: GameEditorP
           </>
         }
       >
-        <FieldGrid fields={gameFields} values={game as unknown as AnyRecord} onChange={mutateGame} />
+        <FieldGrid
+          fields={gameFields}
+          values={game as unknown as Record<string, unknown>}
+          onChange={mutateGame}
+        />
       </Panel>
 
       <Panel
@@ -141,7 +143,7 @@ export function GameEditor({ games, gameIndex, categories, action }: GameEditorP
           {game.items.map((item, index) => (
             <div
               key={`${item.label}-${index}`}
-              className="flex flex-wrap items-end gap-2 rounded-xl border border-slate-200 bg-slate-50/60 p-3"
+              className="flex flex-wrap items-end gap-2 rounded-2xl border border-slate-200 bg-slate-50/70 p-3"
             >
               <div className="w-40 flex-1 space-y-1">
                 <label className="block text-[11px] font-bold text-slate-500">Nama nominal</label>
@@ -154,7 +156,7 @@ export function GameEditor({ games, gameIndex, categories, action }: GameEditorP
                       ),
                     )
                   }
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm shadow-sm transition-colors outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10"
                 />
               </div>
               <div className="w-36 space-y-1">
@@ -171,7 +173,7 @@ export function GameEditor({ games, gameIndex, categories, action }: GameEditorP
                       ),
                     )
                   }
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm shadow-sm transition-colors outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10"
                 />
               </div>
               <span className="pb-2 text-xs font-bold text-blue-600">
@@ -183,7 +185,7 @@ export function GameEditor({ games, gameIndex, categories, action }: GameEditorP
                   onClick={() => moveItem(index, -1)}
                   disabled={index === 0}
                   aria-label="Naikkan"
-                  className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 disabled:opacity-40"
+                  className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-700 disabled:opacity-40 disabled:shadow-none"
                 >
                   ↑
                 </button>
@@ -192,7 +194,7 @@ export function GameEditor({ games, gameIndex, categories, action }: GameEditorP
                   onClick={() => moveItem(index, 1)}
                   disabled={index === game.items.length - 1}
                   aria-label="Turunkan"
-                  className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 disabled:opacity-40"
+                  className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-500 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-700 disabled:opacity-40 disabled:shadow-none"
                 >
                   ↓
                 </button>
@@ -200,7 +202,7 @@ export function GameEditor({ games, gameIndex, categories, action }: GameEditorP
                   type="button"
                   onClick={() => mutateItems(game.items.filter((_, position) => position !== index))}
                   aria-label="Hapus nominal"
-                  className="rounded-md border border-red-200 bg-white px-2 py-1 text-xs font-bold text-red-600"
+                  className="rounded-lg border border-rose-200 bg-white px-2.5 py-1.5 text-xs font-bold text-rose-600 shadow-sm transition-colors hover:bg-rose-50"
                 >
                   Hapus
                 </button>
@@ -212,32 +214,35 @@ export function GameEditor({ games, gameIndex, categories, action }: GameEditorP
         <button
           type="button"
           onClick={() => mutateItems([...game.items, { label: "Nominal baru", price: 0 }])}
-          className="mt-4 rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50"
+          className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
         >
           + Tambah nominal
         </button>
       </Panel>
 
-      <section className="rounded-2xl border border-red-200 bg-red-50/60 p-5">
-        <h2 className="text-sm font-extrabold text-red-700">Hapus game</h2>
-        <p className="mt-1 text-xs text-red-600">
-          Menghapus game juga menghapus semua nominal dan halaman publiknya.
-        </p>
-        <button
-          type="button"
-          onClick={() => {
-            const next = draft.filter((_, index) => index !== gameIndex);
-            startTransition(async () => {
-              const result = await action(next);
-              if (result.ok) router.push("/admin/katalog");
-              else setStatus(result);
-            });
-          }}
-          disabled={pending}
-          className="mt-3 rounded-full bg-red-600 px-4 py-2 text-xs font-bold text-white disabled:opacity-60"
-        >
-          Hapus game ini
-        </button>
+      <section className="overflow-hidden rounded-2xl border border-rose-200 bg-rose-50/60 shadow-sm">
+        <div className="px-5 py-5">
+          <h2 className="text-sm font-extrabold text-rose-700">Hapus game</h2>
+          <p className="mt-1 text-xs leading-relaxed text-rose-600">
+            Menghapus game juga menghapus semua nominal dan halaman publiknya. Tindakan ini tidak
+            bisa dibatalkan.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              const next = draft.filter((_, index) => index !== gameIndex);
+              startTransition(async () => {
+                const result = await action(next);
+                if (result.ok) router.push("/admin/katalog");
+                else setStatus(result);
+              });
+            }}
+            disabled={pending}
+            className="mt-3 rounded-full bg-rose-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm shadow-rose-600/25 transition-transform hover:brightness-110 active:scale-[.98] disabled:opacity-60"
+          >
+            Hapus game ini
+          </button>
+        </div>
       </section>
     </form>
   );

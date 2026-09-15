@@ -1,4 +1,5 @@
 import { saveContentPatch } from "@/app/admin/actions";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import {
   ObjectEditor,
   RepeatableEditor,
@@ -59,13 +60,10 @@ export default async function AdminHighlightsPage() {
 
   return (
     <>
-      <header>
-        <h1 className="text-lg font-extrabold text-slate-900">Keunggulan</h1>
-        <p className="mt-1 text-xs text-slate-500">
-          Kartu “Kenapa Pilih …”, badge di banner game, dan poin jaminan di halaman game serta
-          pembayaran.
-        </p>
-      </header>
+      <AdminPageHeader
+        title="Keunggulan"
+        description="Kartu “Kenapa Pilih …”, badge di banner game, dan poin jaminan di halaman game serta pembayaran."
+      />
 
       <RepeatableEditor<Feature>
         title="Kartu keunggulan di beranda"

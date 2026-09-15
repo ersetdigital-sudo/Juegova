@@ -1,4 +1,5 @@
 import { saveContentPatch } from "@/app/admin/actions";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { ObjectEditor, RepeatableEditor, type FieldDef } from "@/components/admin/fields";
 import { ResetContentButton } from "@/components/admin/ResetContentButton";
 import { getContentSnapshot } from "@/lib/content/store";
@@ -61,12 +62,10 @@ export default async function AdminSettingsPage() {
 
   return (
     <>
-      <header>
-        <h1 className="text-lg font-extrabold text-slate-900">Identitas & Navigasi</h1>
-        <p className="mt-1 text-xs text-slate-500">
-          Nama brand, kontak, menu, kategori, dan judul section di beranda.
-        </p>
-      </header>
+      <AdminPageHeader
+        title="Identitas & Navigasi"
+        description="Nama brand, kontak, menu, kategori, dan judul section di beranda."
+      />
 
       <ObjectEditor
         title="Identitas brand"
@@ -163,13 +162,15 @@ export default async function AdminSettingsPage() {
         addLabel="Tambah link"
       />
 
-      <section className="rounded-2xl border border-red-200 bg-red-50/60 p-5">
-        <h2 className="text-sm font-extrabold text-red-700">Kembalikan ke isi awal</h2>
-        <p className="mt-1 mb-3 text-xs text-red-600">
-          Menghapus semua perubahan tersimpan dan memakai kembali isi bawaan di folder{" "}
-          <code className="rounded bg-white px-1">data/</code>.
-        </p>
-        <ResetContentButton />
+      <section className="overflow-hidden rounded-2xl border border-rose-200 bg-rose-50/60 shadow-sm">
+        <div className="px-5 py-5">
+          <h2 className="text-sm font-extrabold text-rose-700">Kembalikan ke isi awal</h2>
+          <p className="mt-1 mb-3 text-xs leading-relaxed text-rose-600">
+            Menghapus semua perubahan yang pernah disimpan, lalu memakai kembali isi bawaan.
+            Tindakan ini tidak bisa dibatalkan.
+          </p>
+          <ResetContentButton />
+        </div>
       </section>
     </>
   );

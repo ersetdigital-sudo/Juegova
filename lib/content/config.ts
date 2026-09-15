@@ -17,9 +17,7 @@ export const isSupabaseConfigured = () => supabaseEnv() !== null;
 export function supabaseConfig() {
   const config = supabaseEnv();
   if (!config) {
-    throw new Error(
-      "Supabase belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY.",
-    );
+    throw new Error("Penyimpanan belum dikonfigurasi di server ini.");
   }
   return config;
 }
@@ -41,8 +39,10 @@ export async function supabaseFetch(path: string, init: RequestInit = {}) {
   });
 
   if (!response.ok) {
-    const detail = (await response.text()).slice(0, 180);
-    throw new Error(`Supabase ${response.status}: ${detail}`);
+    const detail = (await response.text()).slice(0, 200);
+    // Detail teknis hanya masuk log server, tidak pernah ditampilkan di UI admin.
+    console.error("[penyimpanan] permintaan gagal:", response.status, detail);
+    throw new Error("Penyimpanan sedang tidak bisa diakses. Coba lagi sebentar lagi.");
   }
 
   return response;

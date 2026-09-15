@@ -47,7 +47,9 @@ async function writeToSupabase(content: SiteContent) {
   });
 
   if (!response.ok) {
-    throw new Error(`Supabase ${response.status}: ${(await response.text()).slice(0, 180)}`);
+    const detail = (await response.text()).slice(0, 200);
+    console.error("[konten] gagal menyimpan:", response.status, detail);
+    throw new Error("Perubahan gagal disimpan. Coba lagi sebentar lagi.");
   }
 }
 
@@ -66,8 +68,7 @@ async function writeToFile(content: SiteContent) {
     await fs.writeFile(CONTENT_FILE, `${JSON.stringify(content, null, 2)}\n`, "utf8");
   } catch {
     throw new Error(
-      "Filesystem di server ini read-only, jadi perubahan tidak bisa disimpan. " +
-        "Sambungkan Supabase dengan mengisi env SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY.",
+      "Perubahan tidak bisa disimpan di server ini. Hubungi pengembang untuk mengaktifkan penyimpanan permanen.",
     );
   }
 }
@@ -84,10 +85,11 @@ export async function getContentSnapshot(): Promise<ContentSnapshot> {
       }
       return { content: stripGames(local ?? DEFAULT_CONTENT), driver: "supabase", error: null };
     } catch (error) {
+      console.error("[konten] gagal dibaca:", errorMessage(error));
       return {
         content: stripGames(local ?? DEFAULT_CONTENT),
         driver: "file",
-        error: `Gagal membaca dari Supabase: ${errorMessage(error)}`,
+        error: "Konten gagal dimuat dari penyimpanan.",
       };
     }
   }

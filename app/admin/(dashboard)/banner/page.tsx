@@ -1,4 +1,5 @@
 import { saveContentPatch } from "@/app/admin/actions";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { RepeatableEditor, type FieldDef } from "@/components/admin/fields";
 import { getContentSnapshot } from "@/lib/content/store";
 import type { HeroSlide } from "@/types";
@@ -28,13 +29,10 @@ export default async function AdminBannerPage() {
 
   return (
     <>
-      <header>
-        <h1 className="text-lg font-extrabold text-slate-900">Banner Hero</h1>
-        <p className="mt-1 text-xs text-slate-500">
-          Slider di paling atas beranda. Urutannya sesuai daftar ini, dan berganti otomatis
-          setiap 4 detik.
-        </p>
-      </header>
+      <AdminPageHeader
+        title="Banner Hero"
+        description="Slider di paling atas beranda. Urutannya sesuai daftar ini, dan berganti otomatis setiap 4 detik."
+      />
 
       <RepeatableEditor<HeroSlide>
         title="Slide banner"

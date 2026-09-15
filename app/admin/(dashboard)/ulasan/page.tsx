@@ -1,4 +1,5 @@
 import { saveContentPatch } from "@/app/admin/actions";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { ObjectEditor, RepeatableEditor, type FieldDef } from "@/components/admin/fields";
 import { getContentSnapshot } from "@/lib/content/store";
 import type { GameReview, Testimonial } from "@/types";
@@ -37,13 +38,10 @@ export default async function AdminReviewsPage() {
 
   return (
     <>
-      <header>
-        <h1 className="text-lg font-extrabold text-slate-900">Ulasan</h1>
-        <p className="mt-1 text-xs text-slate-500">
-          Rating yang tampil di halaman game, tiga ulasan di beranda, dan tiga ulasan di setiap
-          halaman game.
-        </p>
-      </header>
+      <AdminPageHeader
+        title="Ulasan"
+        description="Rating yang tampil di halaman game, ulasan di beranda, dan ulasan di setiap halaman game."
+      />
 
       <ObjectEditor
         title="Rating keseluruhan"

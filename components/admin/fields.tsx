@@ -44,7 +44,7 @@ function buildPatch(path: string, value: unknown): AnyRecord {
 }
 
 const inputClass =
-  "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200";
+  "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm transition-colors outline-none placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10";
 
 function FieldInput({
   field,
@@ -160,25 +160,30 @@ export function Panel({
   footer: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white">
-      <header className="border-b border-slate-200 px-5 py-4">
+    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <header className="border-b border-slate-100 bg-gradient-to-r from-slate-50/80 to-white px-5 py-4">
         <h2 className="text-sm font-extrabold text-slate-800">{title}</h2>
-        {description ? <p className="mt-1 text-xs text-slate-500">{description}</p> : null}
+        {description ? (
+          <p className="mt-1 text-xs leading-relaxed text-slate-500">{description}</p>
+        ) : null}
       </header>
       <div className="px-5 py-5">{children}</div>
-      <footer className="flex items-center gap-3 border-t border-slate-200 px-5 py-3">
+      <footer className="flex flex-wrap items-center gap-3 border-t border-slate-100 bg-slate-50/70 px-5 py-3">
         {footer}
       </footer>
     </section>
   );
 }
 
+const SMALL_BUTTON =
+  "rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-500 shadow-sm transition-colors disabled:opacity-40 disabled:shadow-none";
+
 export function SaveButton({ pending, label = "Simpan" }: { pending: boolean; label?: string }) {
   return (
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex items-center gap-2 rounded-full grad px-4 py-2 text-xs font-bold text-white disabled:opacity-60"
+      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-white shadow-sm shadow-blue-600/25 transition-all duration-200 grad hover:brightness-110 active:scale-[.98] disabled:opacity-60 disabled:shadow-none"
     >
       {pending ? "Menyimpan..." : label}
     </button>
@@ -270,7 +275,7 @@ export function StringListEditor({
                 onClick={() => move(index, -1)}
                 disabled={index === 0}
                 aria-label="Naikkan"
-                className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 disabled:opacity-40"
+                className={cx(SMALL_BUTTON, "hover:bg-slate-50 hover:text-slate-700")}
               >
                 ↑
               </button>
@@ -279,7 +284,7 @@ export function StringListEditor({
                 onClick={() => move(index, 1)}
                 disabled={index === items.length - 1}
                 aria-label="Turunkan"
-                className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 disabled:opacity-40"
+                className={cx(SMALL_BUTTON, "hover:bg-slate-50 hover:text-slate-700")}
               >
                 ↓
               </button>
@@ -290,7 +295,7 @@ export function StringListEditor({
                   setStatus(null);
                 }}
                 aria-label="Hapus"
-                className="rounded-md border border-red-200 bg-white px-2 py-1 text-xs font-bold text-red-600"
+                className={cx(SMALL_BUTTON, "border-rose-200 text-rose-600 hover:bg-rose-50")}
               >
                 Hapus
               </button>
@@ -304,7 +309,7 @@ export function StringListEditor({
             setItems((current) => [...current, ""]);
             setStatus(null);
           }}
-          className="mt-4 rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50"
+          className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
         >
           + {addLabel}
         </button>
@@ -451,7 +456,7 @@ export function RepeatableEditor<T extends object>({
         ) : (
           <div className="space-y-3">
             {items.map((item, index) => (
-              <div key={index} className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+              <div key={index} className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
                 <div className="mb-3 flex items-center gap-2">
                   <span className="text-xs font-extrabold text-slate-700">
                     {labelFor(item, index)}
@@ -462,7 +467,7 @@ export function RepeatableEditor<T extends object>({
                       onClick={() => move(index, -1)}
                       disabled={index === 0}
                       aria-label="Naikkan"
-                      className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 disabled:opacity-40"
+                      className={cx(SMALL_BUTTON, "hover:bg-slate-50 hover:text-slate-700")}
                     >
                       ↑
                     </button>
@@ -471,7 +476,7 @@ export function RepeatableEditor<T extends object>({
                       onClick={() => move(index, 1)}
                       disabled={index === items.length - 1}
                       aria-label="Turunkan"
-                      className="rounded-md border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600 disabled:opacity-40"
+                      className={cx(SMALL_BUTTON, "hover:bg-slate-50 hover:text-slate-700")}
                     >
                       ↓
                     </button>
@@ -482,7 +487,7 @@ export function RepeatableEditor<T extends object>({
                         setStatus(null);
                       }}
                       aria-label="Hapus"
-                      className="rounded-md border border-red-200 bg-white px-2 py-1 text-xs font-bold text-red-600"
+                      className={cx(SMALL_BUTTON, "border-rose-200 text-rose-600 hover:bg-rose-50")}
                     >
                       Hapus
                     </button>
@@ -504,7 +509,7 @@ export function RepeatableEditor<T extends object>({
             setItems((current) => [...current, structuredClone(emptyItem)]);
             setStatus(null);
           }}
-          className="mt-4 rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50"
+          className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
         >
           + {addLabel}
         </button>

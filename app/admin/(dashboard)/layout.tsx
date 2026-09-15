@@ -1,73 +1,96 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import { logoutAction } from "../actions";
+import { AdminMobileNav, AdminSidebar } from "@/components/admin/AdminSidebar";
+import { Logo } from "@/components/layout/Logo";
+import { AlertIcon, ExternalLinkIcon, LogoutIcon } from "@/components/ui/Icon";
 import { isAuthEnabled, isAuthorized } from "@/lib/admin/auth";
 import { getContentSnapshot } from "@/lib/content/store";
-import { logoutAction } from "../actions";
-
-const DRIVER_LABEL: Record<string, string> = {
-  supabase: "Supabase",
-  file: "File lokal (content/site.json)",
-  default: "Isi awal (belum ada perubahan tersimpan)",
-};
 
 /** Dashboard harus selalu membaca data terbaru, bukan hasil prerender saat build. */
 export const dynamic = "force-dynamic";
 
+const ACTION_BUTTON =
+  "inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold shadow-sm transition-all duration-200";
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   if (!(await isAuthorized())) redirect("/admin/login");
 
-  const { driver, error } = await getContentSnapshot();
-  const authEnabled = isAuthEnabled();
+  const [{ content, error }, authEnabled] = [await getContentSnapshot(), isAuthEnabled()];
+  const brandName = content.settings.name;
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-[1200px] items-center gap-3 px-4 py-3 lg:px-6">
-          <Link href="/admin" className="text-sm font-extrabold text-slate-900">
-            Dashboard <span className="text-blue-600">Admin</span>
-          </Link>
-          <span className="ml-auto text-[11px] text-slate-400">
-            Penyimpanan: {DRIVER_LABEL[driver] ?? driver}
-          </span>
-          <Link
-            href="/"
-            target="_blank"
-            className="rounded-full border border-slate-300 px-3 py-1.5 text-[11px] font-bold text-slate-600 hover:bg-slate-50"
-          >
-            Lihat situs
-          </Link>
-          {authEnabled ? (
-            <form action={logoutAction}>
-              <button
-                type="submit"
-                className="rounded-full border border-slate-300 px-3 py-1.5 text-[11px] font-bold text-slate-600 hover:bg-slate-50"
+    <div className="min-h-screen bg-slate-50">
+      <div className="lg:flex">
+        <AdminSidebar brandName={brandName} authEnabled={authEnabled} />
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/85 backdrop-blur-md shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+            <div className="flex h-16 items-center gap-2 px-4 lg:px-8">
+              <div className="mr-auto lg:hidden">
+                <Logo name={brandName} gradientId="admin-topbar" />
+              </div>
+              <div className="mr-auto hidden lg:block">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                  Panel Admin
+                </p>
+                <p className="text-sm font-bold text-slate-800">{brandName}</p>
+              </div>
+
+              <Link
+                href="/"
+                target="_blank"
+                className={`${ACTION_BUTTON} text-slate-600 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700`}
               >
-                Keluar
-              </button>
-            </form>
-          ) : null}
-        </div>
-      </header>
+                <ExternalLinkIcon className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Lihat situs</span>
+              </Link>
 
-      <div className="mx-auto max-w-[1200px] px-4 py-6 lg:px-6">
-        {!authEnabled ? (
-          <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
-            <b>Mode tanpa login.</b> Dashboard ini masih terbuka. Set env{" "}
-            <code className="rounded bg-white px-1">ADMIN_PASSWORD</code> sebelum menyambungkan
-            penyimpanan sungguhan (Supabase), supaya tidak ada yang bisa mengubah harga dari luar.
-          </div>
-        ) : null}
+              {authEnabled ? (
+                <form action={logoutAction}>
+                  <button
+                    type="submit"
+                    className={`${ACTION_BUTTON} text-slate-600 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600`}
+                  >
+                    <LogoutIcon className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Keluar</span>
+                  </button>
+                </form>
+              ) : null}
 
-        {error ? (
-          <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-700">
-            {error}
-          </div>
-        ) : null}
+              <span className="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-50 py-1 pl-1 pr-3 sm:flex">
+                <span className="grid h-7 w-7 place-items-center rounded-full text-[10px] font-bold text-white grad">
+                  A
+                </span>
+                <span className="text-[11px] font-bold text-slate-600">Admin</span>
+              </span>
+            </div>
+          </header>
 
-        <div className="flex flex-col gap-6 lg:flex-row">
-          <AdminSidebar />
-          <main className="min-w-0 flex-1 space-y-5">{children}</main>
+          <AdminMobileNav />
+
+          <main className="flex-1 px-4 py-6 lg:px-8 lg:py-8">
+            <div className="mx-auto w-full max-w-[1120px] space-y-6">
+              {!authEnabled ? (
+                <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3.5 text-xs text-amber-800">
+                  <AlertIcon className="mt-px h-4 w-4 shrink-0" />
+                  <p>
+                    <b>Siapa pun bisa membuka halaman ini.</b> Atur password admin dulu supaya
+                    tidak ada yang bisa mengubah harga dari luar.
+                  </p>
+                </div>
+              ) : null}
+
+              {error ? (
+                <div className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3.5 text-xs text-rose-700">
+                  <AlertIcon className="mt-px h-4 w-4 shrink-0" />
+                  <p>Data terbaru gagal dimuat, jadi yang tampil mungkin sudah tidak sesuai.</p>
+                </div>
+              ) : null}
+
+              {children}
+            </div>
+          </main>
         </div>
       </div>
     </div>
