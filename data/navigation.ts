@@ -4,6 +4,7 @@ export const HEADER_NAV: NavItem[] = [
   { id: "beranda", label: "Beranda", href: "/" },
   { id: "kategori", label: "Kategori", href: "/#kategori" },
   { id: "promo", label: "Promo", href: "/#promo" },
+  { id: "cek-transaksi", label: "Cek Transaksi", href: "/cek-transaksi" },
   { id: "bantuan", label: "Bantuan", href: "/#bantuan" },
 ];
 
@@ -11,6 +12,7 @@ export const FOOTER_MENU: LinkItem[] = [
   { label: "Beranda", href: "/" },
   { label: "Kategori", href: "/#kategori" },
   { label: "Promo", href: "/#promo" },
+  { label: "Cek Transaksi", href: "/cek-transaksi" },
   { label: "Bantuan", href: "/#bantuan" },
 ];
 

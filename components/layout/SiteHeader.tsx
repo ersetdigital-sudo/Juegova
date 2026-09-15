@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SearchIcon } from "@/components/ui/Icon";
 import { cx } from "@/lib/cx";
 import type { Game, NavItem, SiteSettings } from "@/types";
 import { GameSearch } from "./GameSearch";
@@ -45,18 +46,16 @@ export function SiteHeader({
         {showSearch ? <GameSearch games={games} /> : null}
 
         <div className="flex items-center gap-2 ml-auto">
-          <a
-            href="#"
-            className="hidden sm:inline-flex px-4 py-2 rounded-full text-sm font-bold border border-slate-300 text-blue-700 hover:bg-slate-50"
+          {/* Juegova tidak butuh akun: pembeli langsung isi data pesanan lalu bayar. */}
+          <Link
+            href="/cek-transaksi"
+            aria-current={active === "cek-transaksi" ? "page" : undefined}
+            className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold text-white grad glow sm:px-4"
           >
-            Login
-          </a>
-          <a
-            href="#"
-            className="inline-flex px-4 py-2 rounded-full text-sm font-bold text-white grad glow"
-          >
-            Daftar
-          </a>
+            <SearchIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Cek Transaksi</span>
+            <span className="sm:hidden">Cek</span>
+          </Link>
           <MobileNav nav={nav} games={games} active={active} />
         </div>
       </div>

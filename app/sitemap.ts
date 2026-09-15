@@ -14,6 +14,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "daily",
       priority: 1,
     },
+    {
+      url: absoluteUrl("/cek-transaksi"),
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
     // /pembayaran sengaja tidak didaftarkan karena halamannya noindex.
     ...games.map((game) => ({
       url: absoluteUrl(getGamePath(game.id)),
