@@ -5,12 +5,11 @@ import { useTransition } from "react";
 import type { ActionResult } from "@/components/admin/fields";
 import type { Game, GameCategory } from "@/types";
 
-type AnyRecord = Record<string, unknown>;
-
 interface NewGameButtonProps {
   games: Game[];
   categories: GameCategory[];
-  action: (patch: AnyRecord) => Promise<ActionResult>;
+  /** Server action app/admin/actions.ts yang menulis ke tabel games/game_items. */
+  action: (games: Game[]) => Promise<ActionResult>;
 }
 
 export function NewGameButton({ games, categories, action }: NewGameButtonProps) {
@@ -38,7 +37,7 @@ export function NewGameButton({ games, categories, action }: NewGameButtonProps)
     };
 
     startTransition(async () => {
-      const result = await action({ games: [...games, draft] });
+      const result = await action([...games, draft]);
       if (result.ok) router.push(`/admin/katalog/${slug}`);
     });
   };

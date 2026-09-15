@@ -6,6 +6,7 @@ import { cx } from "@/lib/cx";
 
 const NAV = [
   { href: "/admin", label: "Ringkasan" },
+  { href: "/admin/pesanan", label: "Pesanan" },
   { href: "/admin/katalog", label: "Katalog & Harga" },
   { href: "/admin/banner", label: "Banner Hero" },
   { href: "/admin/ulasan", label: "Ulasan" },

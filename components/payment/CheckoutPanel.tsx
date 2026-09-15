@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { CheckIcon } from "@/components/ui/Icon";
 import { TrustList } from "@/components/ui/TrustList";
-import { formatRupiah } from "@/lib/format";
+import { formatDateTime, formatRupiah } from "@/lib/format";
+import { markOrderPaid } from "@/lib/orders/actions";
 import type { PaymentInstruction } from "@/lib/payment-instructions";
 import type { OrderPricing } from "@/lib/pricing";
 import type { TrustItem } from "@/types";
@@ -15,11 +16,12 @@ import { PaymentInstructions } from "./PaymentInstructions";
 const COUNTDOWN_SECONDS = 15 * 60;
 
 interface CheckoutPanelProps {
+  invoice: string;
   game: string;
   item: string;
   uid: string;
   paymentName: string;
-  invoice: string;
+  /** Waktu pesanan dibuat (ISO). Batas bayar dihitung dari sini, bukan dari saat halaman dibuka. */
   orderedAt: string;
   pricing: OrderPricing;
   instruction: PaymentInstruction;
@@ -27,21 +29,29 @@ interface CheckoutPanelProps {
 }
 
 export function CheckoutPanel({
+  invoice,
   game,
   item,
   uid,
   paymentName,
-  invoice,
   orderedAt,
   pricing,
   instruction,
   trustItems,
 }: CheckoutPanelProps) {
-  const [deadline] = useState(() => Date.now() + COUNTDOWN_SECONDS * 1000);
+  const deadline = new Date(orderedAt).getTime() + COUNTDOWN_SECONDS * 1000;
   const [remaining, setRemaining] = useState(COUNTDOWN_SECONDS);
   const [paid, setPaid] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
 
   const expired = remaining <= 0;
+
+  // Hitung sisa waktu yang sebenarnya begitu sampai di browser — nilai di server
+  // selalu 15:00, jadi harus disesuaikan tanpa bikin hydration mismatch.
+  useEffect(() => {
+    setRemaining(Math.max(0, Math.ceil((deadline - Date.now()) / 1000)));
+  }, [deadline]);
 
   useEffect(() => {
     if (paid || expired) return;
@@ -63,6 +73,18 @@ export function CheckoutPanel({
 
   const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
   const seconds = String(remaining % 60).padStart(2, "0");
+
+  const handlePaid = () => {
+    setPayError(null);
+    startTransition(async () => {
+      const result = await markOrderPaid(invoice);
+      if (!result.ok) {
+        setPayError(result.message);
+        return;
+      }
+      setPaid(true);
+    });
+  };
 
   return (
     <>
@@ -95,7 +117,7 @@ export function CheckoutPanel({
             game={game}
             uid={uid}
             item={item}
-            orderedAt={orderedAt}
+            orderedAt={formatDateTime(new Date(orderedAt))}
           />
 
           <div className="rounded-2xl bg-slate-50 border border-slate-200 p-4 text-[12px] text-slate-600 space-y-1.5">
@@ -131,11 +153,11 @@ export function CheckoutPanel({
 
             <button
               type="button"
-              onClick={() => setPaid(true)}
-              disabled={expired}
+              onClick={handlePaid}
+              disabled={expired || pending}
               className="mt-4 w-full py-3 rounded-full grad text-white font-extrabold text-sm glow disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Saya Sudah Bayar
+              {pending ? "Menyimpan..." : "Saya Sudah Bayar"}
             </button>
             <Link
               href="/#kategori"
@@ -143,6 +165,11 @@ export function CheckoutPanel({
             >
               Batalkan Pesanan
             </Link>
+            {payError ? (
+              <p role="alert" className="mt-2 text-[11px] font-bold text-red-600 text-center">
+                {payError}
+              </p>
+            ) : null}
             <p className="mt-3 text-[11px] text-slate-500 text-center">
               Butuh bantuan? Hubungi CS lewat halaman Bantuan.
             </p>

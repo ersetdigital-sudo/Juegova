@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { InfoIcon } from "@/components/ui/Icon";
 import { TrustList } from "@/components/ui/TrustList";
 import { PAYMENT_METHODS } from "@/data/payments";
 import { formatRupiah } from "@/lib/format";
+import { createCheckoutOrder } from "@/lib/orders/actions";
 import type { Game, GameReview, SiteRating, TrustItem } from "@/types";
 import { GameInfo } from "./GameInfo";
 import { GameReviews } from "./GameReviews";
@@ -32,6 +33,7 @@ export function GameTopUp({ game, steps, reviews, rating, trustItems }: GameTopU
   const [itemIndex, setItemIndex] = useState<number | null>(null);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
 
   const selectedItem = itemIndex === null ? null : game.items[itemIndex];
   const selectedPayment = PAYMENT_METHODS.find((method) => method.id === paymentId) ?? null;
@@ -52,14 +54,24 @@ export function GameTopUp({ game, steps, reviews, rating, trustItems }: GameTopU
       return;
     }
 
-    const params = new URLSearchParams({
-      game: game.name,
-      item: selectedItem.label,
-      price: String(selectedItem.price),
-      uid: `${userId.trim()}${zoneSuffix}`,
-      pay: selectedPayment.name,
+    setError(null);
+
+    startTransition(async () => {
+      // Harga diambil server dari database, bukan dikirim dari browser.
+      const result = await createCheckoutOrder({
+        gameId: game.id,
+        itemLabel: selectedItem.label,
+        accountId: `${userId.trim()}${zoneSuffix}`,
+        paymentMethod: selectedPayment.name,
+      });
+
+      if (!result.ok) {
+        setError(result.message);
+        return;
+      }
+
+      router.push(`/pembayaran/${result.invoice}`);
     });
-    router.push(`/pembayaran?${params.toString()}`);
   };
 
   return (
@@ -142,6 +154,7 @@ export function GameTopUp({ game, steps, reviews, rating, trustItems }: GameTopU
           paymentName={selectedPayment ? selectedPayment.name : "-"}
           total={selectedItem ? formatRupiah(selectedItem.price) : "Rp 0"}
           error={error}
+          pending={pending}
           onBuy={handleBuy}
         />
 

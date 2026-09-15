@@ -186,3 +186,22 @@ export interface ActionResult {
   ok: boolean;
   message: string;
 }
+
+export type OrderStatus = "menunggu" | "dibayar" | "selesai" | "batal";
+
+/** Satu pesanan top up. Disimpan di tabel `orders`. */
+export interface Order {
+  id: string;
+  invoice: string;
+  gameId: string | null;
+  gameName: string;
+  itemLabel: string;
+  accountId: string;
+  paymentMethod: string;
+  subtotal: number;
+  fee: number;
+  discount: number;
+  total: number;
+  status: OrderStatus;
+  createdAt: string;
+}

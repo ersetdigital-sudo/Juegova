@@ -19,7 +19,8 @@ interface GameEditorProps {
   games: Game[];
   gameIndex: number;
   categories: GameCategory[];
-  action: (patch: AnyRecord) => Promise<ActionResult>;
+  /** Server action app/admin/actions.ts yang menulis ke tabel games/game_items. */
+  action: (games: Game[]) => Promise<ActionResult>;
 }
 
 export function GameEditor({ games, gameIndex, categories, action }: GameEditorProps) {
@@ -70,7 +71,7 @@ export function GameEditor({ games, gameIndex, categories, action }: GameEditorP
 
   const save = (next: Game[], message?: string) =>
     startTransition(async () => {
-      const result = await action({ games: next });
+      const result = await action(next);
       setStatus(result.ok && message ? { ok: true, message } : result);
       if (result.ok) router.refresh();
     });
@@ -227,7 +228,7 @@ export function GameEditor({ games, gameIndex, categories, action }: GameEditorP
           onClick={() => {
             const next = draft.filter((_, index) => index !== gameIndex);
             startTransition(async () => {
-              const result = await action({ games: next });
+              const result = await action(next);
               if (result.ok) router.push("/admin/katalog");
               else setStatus(result);
             });

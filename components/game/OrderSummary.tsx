@@ -7,6 +7,8 @@ interface OrderSummaryProps {
   paymentName: string;
   total: string;
   error: string | null;
+  /** Sedang membuat pesanan di server. */
+  pending: boolean;
   onBuy: () => void;
 }
 
@@ -17,6 +19,7 @@ export function OrderSummary({
   paymentName,
   total,
   error,
+  pending,
   onBuy,
 }: OrderSummaryProps) {
   return (
@@ -50,10 +53,11 @@ export function OrderSummary({
       <button
         type="button"
         onClick={onBuy}
-        className="mt-4 w-full inline-flex items-center justify-center gap-1.5 py-3 rounded-full grad text-white font-extrabold text-sm glow"
+        disabled={pending}
+        className="mt-4 w-full inline-flex items-center justify-center gap-1.5 py-3 rounded-full grad text-white font-extrabold text-sm glow disabled:opacity-60"
       >
         <BoltIcon className="w-4 h-4" />
-        Beli Sekarang
+        {pending ? "Membuat pesanan..." : "Beli Sekarang"}
       </button>
 
       {error ? (
