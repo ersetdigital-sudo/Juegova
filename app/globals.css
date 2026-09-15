@@ -1,0 +1,133 @@
+@import "tailwindcss" source(none);
+
+/* Scan hanya folder aplikasi — halaman HTML asli di /pages tidak ikut di-scan. */
+@source "../app";
+@source "../components";
+@source "../data";
+@source "../lib";
+
+/*
+ * Gaya di bawah ini adalah salinan dari <style> di HTML asli.
+ * Sengaja ditulis di luar @layer supaya prioritasnya sama seperti aslinya
+ * (style asli juga tidak berlapis, jadi menang atas utility Tailwind).
+ */
+:root {
+  --blue: #3b82f6;
+  --blue-d: #1d4ed8;
+  --amber: #ff9f1c;
+  --ink: #12131a;
+  --soft: #f6f7f9;
+}
+
+body {
+  font-family: var(--font-jakarta), system-ui, sans-serif;
+  color: var(--ink);
+  background: #fff;
+}
+
+h1,
+h2,
+h3,
+.display {
+  font-family: var(--font-outfit), system-ui, sans-serif;
+}
+
+.scribble {
+  font-family: var(--font-caveat), cursive;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.06em;
+}
+
+.glow {
+  box-shadow: 0 16px 40px -18px rgba(37, 99, 235, 0.55);
+}
+
+/* Strip "Game Populer" — scrollbar disembunyikan untuk baris chip kategori. */
+.no-bar::-webkit-scrollbar {
+  display: none;
+}
+.no-bar {
+  scrollbar-width: none;
+}
+
+.card-img {
+  transition: transform 0.5s ease;
+}
+.game-card:hover .card-img {
+  transform: scale(1.07);
+}
+
+.marquee {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+.marquee-run {
+  display: flex;
+  align-items: center;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+/* -25% = satu salinan dari 4 salinan di marquee-track, jadi kecepatannya sama
+   dengan -50% pada 2 salinan (satu salinan per 28 detik). */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-25%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+
+  /*
+   * Jaring pengaman untuk scroll-reveal: kalau animasinya tidak dijalankan,
+   * konten tetap terlihat. `!important` diperlukan karena framer-motion menulis
+   * opacity/transform sebagai inline style.
+   */
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* State terpilih untuk kartu nominal & metode pembayaran.
+   Ditulis tanpa @layer agar tetap menang atas utility border-* seperti aslinya. */
+.opt.sel {
+  border-color: #2563eb;
+  background: #eff4ff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+.pay.sel {
+  border-color: #ff9f1c;
+  background: #fff8ed;
+}
+
+/*
+ * Gradient brand sebagai utility Tailwind supaya varian seperti `group-hover:grad`
+ * benar-benar menghasilkan CSS (di HTML asli class ini tidak pernah ter-generate,
+ * jadi efek hover kartu game tidak jalan — di sini sengaja dibetulkan).
+ */
+@utility grad {
+  background: linear-gradient(100deg, #1d4ed8, #2563eb 55%, #3b82f6);
+}
+
+@utility grad-text {
+  background: linear-gradient(100deg, #1d4ed8, #2563eb 55%, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
