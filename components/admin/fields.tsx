@@ -43,7 +43,7 @@ function setPath(source: AnyRecord, path: string, value: unknown): AnyRecord {
 }
 
 /** Membungkus nilai jadi patch bersarang, mis. ("navigation.header", data) -> { navigation: { header: data } }. */
-function buildPatch(path: string, value: unknown): AnyRecord {
+export function buildPatch(path: string, value: unknown): AnyRecord {
   const [head, ...rest] = path.split(".");
   if (!head) return {};
   return rest.length === 0 ? { [head]: value } : { [head]: buildPatch(rest.join("."), value) };

@@ -123,12 +123,16 @@ export interface SiteRating {
   count: number;
 }
 
+/** Platform media sosial yang didukung. Daftarnya tetap, lihat data/social.ts. */
+export type SocialPlatformId = "facebook" | "instagram" | "tiktok" | "youtube" | "x";
+
+/**
+ * Media sosial situs. Platformnya ditentukan sistem, admin cuma mengisi URL.
+ * URL kosong = ikon platform itu tidak ditampilkan di footer.
+ */
 export interface SocialLink {
-  /** Huruf pendek yang tampil di bulatan footer, contoh: "ig". */
-  short: string;
-  label: string;
-  /** Null = platform ini belum punya URL, jadi ditampilkan sebagai ikon mati. */
-  url: string | null;
+  id: SocialPlatformId;
+  url: string;
 }
 
 export interface ContactSettings {

@@ -1,7 +1,9 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { unstable_cache } from "next/cache";
 import { DEFAULT_PAYMENT_METHODS } from "@/data/payments";
 import { errorMessage, isSupabaseConfigured, supabaseFetch } from "@/lib/content/config";
+import { CONTENT_TAG } from "@/lib/content/store";
 import type { PaymentMethod } from "@/types";
 
 const PAYMENTS_FILE = path.join(process.cwd(), "content", "payments.json");
@@ -97,6 +99,19 @@ export async function listActivePaymentMethods(): Promise<PaymentMethod[]> {
   const { methods } = await getPaymentSnapshot();
   return methods.filter((method) => method.isActive);
 }
+
+/**
+ * Versi ber-cache untuk halaman yang di-prerender.
+ *
+ * Tanpa pembungkus ini, fetch `no-store` di dalam listActivePaymentMethods
+ * terbaca Next sebagai dynamic usage saat build: halaman game tetap jadi,
+ * tapi isinya jatuh ke data cadangan, bukan metode yang ada di database.
+ */
+export const getActivePaymentMethods = unstable_cache(
+  listActivePaymentMethods,
+  ["active-payment-methods"],
+  { tags: [CONTENT_TAG] },
+);
 
 export async function findPaymentMethod(id: string | null): Promise<PaymentMethod | null> {
   if (!id) return null;

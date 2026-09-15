@@ -2,8 +2,9 @@ import { saveContentPatch } from "@/app/admin/actions";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { ObjectEditor, RepeatableEditor, type FieldDef } from "@/components/admin/fields";
 import { ResetContentButton } from "@/components/admin/ResetContentButton";
+import { SocialLinksEditor } from "@/components/admin/SocialLinksEditor";
 import { getContentSnapshot } from "@/lib/content/store";
-import type { GameCategory, LinkItem, NavItem, SocialLink } from "@/types";
+import type { GameCategory, LinkItem, NavItem } from "@/types";
 
 export const metadata = { title: "Identitas & Navigasi", robots: { index: false, follow: false } };
 
@@ -23,12 +24,6 @@ const CONTACT_FIELDS: FieldDef[] = [
   { name: "whatsapp", label: "Nomor WhatsApp CS", type: "text", help: "Format internasional tanpa +, contoh 6281234567890." },
   { name: "email", label: "Email", type: "text" },
   { name: "phone", label: "Telepon", type: "text" },
-];
-
-const SOCIAL_FIELDS: FieldDef[] = [
-  { name: "label", label: "Platform", type: "text" },
-  { name: "short", label: "Huruf di footer", type: "text" },
-  { name: "url", label: "URL profil", type: "text", help: "Kosongkan kalau belum ada — ikonnya jadi tidak bisa diklik." },
 ];
 
 const HEADING_FIELDS: FieldDef[] = [
@@ -52,7 +47,6 @@ const FOOTER_LINK_FIELDS: FieldDef[] = [
   { name: "href", label: "Link", type: "text" },
 ];
 
-const EMPTY_SOCIAL: SocialLink = { short: "", label: "", url: "" };
 const EMPTY_CATEGORY: GameCategory = { id: "", label: "" };
 const EMPTY_NAV: NavItem = { id: "", label: "", href: "" };
 const EMPTY_LINK: LinkItem = { label: "", href: "" };
@@ -85,17 +79,7 @@ export default async function AdminSettingsPage() {
         patchPath="settings.contact"
       />
 
-      <RepeatableEditor<SocialLink>
-        title="Media sosial"
-        fields={SOCIAL_FIELDS}
-        initialItems={content.settings.socials}
-        emptyItem={EMPTY_SOCIAL}
-        action={saveContentPatch}
-        patchPath="settings.socials"
-        titleField="label"
-        titlePrefix="Sosmed"
-        addLabel="Tambah sosmed"
-      />
+      <SocialLinksEditor initial={content.settings.socials} action={saveContentPatch} />
 
       <ObjectEditor
         title="Judul section katalog"

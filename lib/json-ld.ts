@@ -1,3 +1,4 @@
+import { activeSocials } from "@/data/social";
 import { getGamePath, getPriceRange } from "@/lib/games";
 import { absoluteUrl } from "@/lib/site";
 import type { Game, GameReview, SiteContent, SiteRating } from "@/types";
@@ -6,9 +7,7 @@ type JsonLd = Record<string, unknown>;
 
 export function organizationJsonLd(content: SiteContent): JsonLd {
   const { settings } = content;
-  const profiles = settings.socials
-    .map((social) => social.url)
-    .filter((url): url is string => Boolean(url));
+  const profiles = activeSocials(settings.socials).map((social) => social.url);
 
   return {
     "@context": "https://schema.org",

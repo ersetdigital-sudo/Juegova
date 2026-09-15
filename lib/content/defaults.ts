@@ -1,9 +1,10 @@
-import { CONTACT, SOCIAL_LINKS } from "@/data/contact";
+import { CONTACT } from "@/data/contact";
 import { FEATURES } from "@/data/features";
 import { GAME_BADGES, GAMES, GAME_CATEGORIES, TOP_UP_STEPS } from "@/data/games";
 import { HERO_SLIDES } from "@/data/hero-slides";
 import { FOOTER_ABOUT, FOOTER_MENU, HEADER_NAV } from "@/data/navigation";
 import { DEFAULT_SETTINGS } from "@/data/settings";
+import { DEFAULT_SOCIALS } from "@/data/social";
 import {
   GAME_REVIEWS,
   PAYMENT_TRUST_ITEMS,
@@ -25,7 +26,7 @@ export const DEFAULT_CONTENT: SiteContent = {
   settings: {
     ...DEFAULT_SETTINGS,
     contact: CONTACT,
-    socials: SOCIAL_LINKS,
+    socials: DEFAULT_SOCIALS,
   },
   navigation: {
     header: HEADER_NAV,

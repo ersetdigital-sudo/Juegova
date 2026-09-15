@@ -10,7 +10,7 @@ import { getSiteContent } from "@/lib/content/store";
 import { findGame, getGamePath } from "@/lib/games";
 import { breadcrumbJsonLd, productJsonLd } from "@/lib/json-ld";
 import { createMetadata } from "@/lib/metadata";
-import { listActivePaymentMethods } from "@/lib/payments/store";
+import { getActivePaymentMethods } from "@/lib/payments/store";
 
 interface GamePageProps {
   params: Promise<{ slug: string }>;
@@ -45,7 +45,7 @@ export default async function GamePage({ params }: GamePageProps) {
   const { slug } = await params;
   const [content, paymentMethods] = await Promise.all([
     getSiteContent(),
-    listActivePaymentMethods(),
+    getActivePaymentMethods(),
   ]);
 
   const game = findGame(content.games, slug);

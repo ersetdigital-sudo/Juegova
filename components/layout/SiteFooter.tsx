@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { BoltIcon } from "@/components/ui/Icon";
+import { SocialIcon } from "@/components/ui/SocialIcon";
+import { activeSocials, socialPlatformLabel } from "@/data/social";
 import { cx } from "@/lib/cx";
 import type { NavigationContent, SiteSettings } from "@/types";
 import { Logo } from "./Logo";
 import { NewsletterForm } from "./NewsletterForm";
 
 const SOCIAL_CLASS =
-  "w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center";
+  "flex h-7 w-7 items-center justify-center rounded-full bg-white border border-slate-200";
 
 interface SiteFooterProps {
   settings: SiteSettings;
@@ -38,6 +40,9 @@ function BottomBar({ settings, compact }: { settings: SiteSettings; compact: boo
 }
 
 export function SiteFooter({ settings, navigation, variant = "full" }: SiteFooterProps) {
+  // Platform tanpa URL tidak ditampilkan sama sekali di footer.
+  const socials = activeSocials(settings.socials);
+
   if (variant === "compact") {
     return (
       <footer className="bg-slate-50 border-t border-slate-200">
@@ -87,28 +92,32 @@ export function SiteFooter({ settings, navigation, variant = "full" }: SiteFoote
             ))}
           </ul>
 
-          <p className="mt-4 text-sm font-extrabold">Ikuti Kami</p>
-          <div className="mt-2 flex gap-2 text-slate-500 text-xs font-bold">
-            {settings.socials.map((social) =>
-              social.url ? (
-                <a
-                  key={social.short}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={social.label}
-                  className={cx(SOCIAL_CLASS, "hover:text-blue-600")}
-                >
-                  {social.short}
-                </a>
-              ) : (
-                // URL profil belum diisi, jadi ditampilkan sebagai ikon mati.
-                <span key={social.short} title={social.label} className={SOCIAL_CLASS}>
-                  {social.short}
-                </span>
-              ),
-            )}
-          </div>
+          {socials.length > 0 ? (
+            <>
+              <p className="mt-4 text-sm font-extrabold">Ikuti Kami</p>
+              <div className="mt-2 flex gap-2">
+                {socials.map((social) => {
+                  const label = socialPlatformLabel(social.id);
+                  return (
+                    <a
+                      key={social.id}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      title={label}
+                      className={cx(
+                        SOCIAL_CLASS,
+                        "text-slate-500 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600",
+                      )}
+                    >
+                      <SocialIcon platform={social.id} className="h-3.5 w-3.5" />
+                    </a>
+                  );
+                })}
+              </div>
+            </>
+          ) : null}
           <p className="scribble mt-3 text-blue-600 text-base">{settings.slogan}</p>
         </div>
       </div>

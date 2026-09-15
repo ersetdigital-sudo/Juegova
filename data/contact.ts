@@ -1,4 +1,4 @@
-import type { ContactSettings, SocialLink } from "@/types";
+import type { ContactSettings } from "@/types";
 
 /**
  * Nilai awal data kontak. HTML asli tidak punya nomor/link apa pun,
@@ -12,11 +12,3 @@ export const CONTACT: ContactSettings = {
   /** contoh: "+62 812-3456-7890" */
   phone: null,
 };
-
-export const SOCIAL_LINKS: SocialLink[] = [
-  { short: "f", label: "Facebook", url: null },
-  { short: "ig", label: "Instagram", url: null },
-  { short: "tt", label: "TikTok", url: null },
-  { short: "yt", label: "YouTube", url: null },
-  { short: "X", label: "X", url: null },
-];

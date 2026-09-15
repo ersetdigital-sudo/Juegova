@@ -1,5 +1,6 @@
 import type { SiteSettings } from "@/types";
-import { CONTACT, SOCIAL_LINKS } from "./contact";
+import { CONTACT } from "./contact";
+import { DEFAULT_SOCIALS } from "./social";
 
 /** Nilai awal identitas situs. Semuanya bisa diubah dari /admin/pengaturan. */
 export const DEFAULT_SETTINGS: SiteSettings = {
@@ -14,5 +15,5 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   ogImage: "/images/og-cover.jpg",
   twitterHandle: null,
   contact: CONTACT,
-  socials: SOCIAL_LINKS,
+  socials: DEFAULT_SOCIALS,
 };
