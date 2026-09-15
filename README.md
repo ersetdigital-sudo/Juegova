@@ -156,6 +156,14 @@ Available at `/admin`. What can be managed:
 
 Saves are recursive merges, so a form submits only its own slice and cannot wipe sibling data. Every save revalidates the content cache, so public pages update on the next request while game pages stay statically generated.
 
+### Social links
+
+Five platforms are fixed — Facebook, Instagram, TikTok, YouTube, X — and each one takes a single URL. The dashboard deliberately has no platform field, no "short letter" field, no reorder and no delete: the platform list and its order come from `data/social.ts`.
+
+Leaving a URL empty is how a platform is hidden. It is not rendered at all rather than shown as a dead circle, and if every URL is empty the whole "Ikuti Kami" block disappears, so the footer never shows a heading with nothing under it.
+
+The icons are the official marks from `simple-icons`, drawn as a 24×24 path in `currentColor` inside a 28px circle — the same circle and hover state the letters used to sit in, so the footer geometry is unchanged.
+
 ### Payments
 
 Payment methods are fully data-driven — nothing about them lives in code.
