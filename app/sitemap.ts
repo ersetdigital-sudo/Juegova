@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
-import { getAllGames, getGamePath } from "@/lib/games";
+import { getSiteContent } from "@/lib/content/store";
+import { getGamePath } from "@/lib/games";
 import { absoluteUrl } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { games } = await getSiteContent();
   const lastModified = new Date();
 
   return [
@@ -13,7 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     // /pembayaran sengaja tidak didaftarkan karena halamannya noindex.
-    ...getAllGames().map((game) => ({
+    ...games.map((game) => ({
       url: absoluteUrl(getGamePath(game.id)),
       lastModified,
       changeFrequency: "weekly" as const,

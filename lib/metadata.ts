@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { siteConfig } from "@/lib/site";
+import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH, SITE_LOCALE } from "@/lib/site";
+import type { SiteSettings } from "@/types";
 
 interface OgImage {
   url: string;
@@ -9,6 +10,7 @@ interface OgImage {
 }
 
 interface PageMetadataOptions {
+  settings: SiteSettings;
   /** Tanpa judul, template dari root layout yang dipakai. */
   title?: string;
   description: string;
@@ -20,14 +22,8 @@ interface PageMetadataOptions {
   type?: "website" | "article";
 }
 
-const defaultImage = (): OgImage => ({
-  url: siteConfig.ogImage,
-  width: siteConfig.ogImageWidth,
-  height: siteConfig.ogImageHeight,
-  alt: siteConfig.tagline,
-});
-
 export function createMetadata({
+  settings,
   title,
   description,
   path,
@@ -35,11 +31,14 @@ export function createMetadata({
   image,
   type = "website",
 }: PageMetadataOptions): Metadata {
-  const ogImage = image ?? defaultImage();
+  const ogImage = image ?? {
+    url: settings.ogImage,
+    width: OG_IMAGE_WIDTH,
+    height: OG_IMAGE_HEIGHT,
+    alt: settings.tagline,
+  };
   // Judul sosial disamakan dengan <title> dokumen (template root layout menambahkan nama situs).
-  const socialTitle = title
-    ? `${title} — ${siteConfig.name}`
-    : `${siteConfig.name} — ${siteConfig.tagline}`;
+  const socialTitle = title ? `${title} — ${settings.name}` : `${settings.name} — ${settings.tagline}`;
 
   return {
     ...(title ? { title } : {}),
@@ -63,8 +62,8 @@ export function createMetadata({
       url: path,
       title: socialTitle,
       description,
-      siteName: siteConfig.name,
-      locale: siteConfig.locale,
+      siteName: settings.name,
+      locale: SITE_LOCALE,
       images: [ogImage],
     },
     twitter: {
@@ -72,8 +71,8 @@ export function createMetadata({
       title: socialTitle,
       description,
       images: [ogImage.url],
-      ...(siteConfig.twitterHandle
-        ? { site: siteConfig.twitterHandle, creator: siteConfig.twitterHandle }
+      ...(settings.twitterHandle
+        ? { site: settings.twitterHandle, creator: settings.twitterHandle }
         : {}),
     },
   };

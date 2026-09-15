@@ -1,11 +1,18 @@
 import Link from "next/link";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
+import { getSiteContent } from "@/lib/content/store";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const content = await getSiteContent();
+
   return (
     <>
-      <SiteHeader />
+      <SiteHeader
+        settings={content.settings}
+        nav={content.navigation.header}
+        games={content.games}
+      />
 
       <main className="max-w-[1280px] mx-auto px-4 lg:px-6 py-20 text-center">
         <p className="scribble text-4xl text-blue-600">404</p>
@@ -13,7 +20,7 @@ export default function NotFound() {
           Halaman Tidak Ditemukan
         </h1>
         <p className="text-sm text-slate-500 mt-2">
-          Game atau halaman yang kamu cari belum tersedia di Juegova.
+          Game atau halaman yang kamu cari belum tersedia di {content.settings.name}.
         </p>
         <Link
           href="/#kategori"
@@ -23,7 +30,11 @@ export default function NotFound() {
         </Link>
       </main>
 
-      <SiteFooter variant="compact" />
+      <SiteFooter
+        settings={content.settings}
+        navigation={content.navigation}
+        variant="compact"
+      />
     </>
   );
 }

@@ -1,5 +1,4 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { defaultGameId } from "@/lib/games";
 
 /**
  * HTML statis lama memakai URL /game?id=xxx. Dipindahkan ke /game/xxx supaya
@@ -14,7 +13,8 @@ export function middleware(request: NextRequest) {
 
   // Hanya buang parameter id; parameter lain (mis. utm_source) tetap dibawa.
   url.searchParams.delete("id");
-  url.pathname = id ? `/game/${id}` : `/game/${defaultGameId}`;
+  // Tanpa id, tidak ada game yang bisa ditebak — arahkan ke katalog di beranda.
+  url.pathname = id ? `/game/${id}` : "/";
 
   return NextResponse.redirect(url, 308);
 }

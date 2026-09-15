@@ -4,38 +4,45 @@ import { useMemo, useState } from "react";
 import { ArrowRightIcon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { cx } from "@/lib/cx";
-import type { Game, GameCategory, GameCategoryId } from "@/types";
+import type { Game, GameCategory, SectionCopy } from "@/types";
 import { GameCard } from "./GameCard";
 
-type Filter = GameCategoryId | "all";
+/** Sentinel untuk chip "Semua" — id kategori lain datang dari data admin. */
+const ALL_CATEGORIES = "all";
+
+type Filter = string;
 
 interface GameShowcaseProps {
   games: Game[];
   /** Hanya kategori yang punya game — chip kosong tidak ditampilkan. */
   categories: GameCategory[];
+  heading: SectionCopy;
 }
 
 const CHIP_BASE = "px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap";
 
-export function GameShowcase({ games, categories }: GameShowcaseProps) {
-  const [filter, setFilter] = useState<Filter>("all");
+export function GameShowcase({ games, categories, heading }: GameShowcaseProps) {
+  const [filter, setFilter] = useState<Filter>(ALL_CATEGORIES);
 
   const visibleGames = useMemo(
-    () => (filter === "all" ? games : games.filter((game) => game.category === filter)),
+    () =>
+      filter === ALL_CATEGORIES
+        ? games
+        : games.filter((game) => game.category === filter),
     [filter, games],
   );
 
   const chips: { id: Filter; label: string }[] = [
-    { id: "all", label: "Semua" },
-    ...categories.map((category) => ({ id: category.id as Filter, label: category.label })),
+    { id: ALL_CATEGORIES, label: "Semua" },
+    ...categories.map((category) => ({ id: category.id, label: category.label })),
   ];
 
   return (
     <section id="kategori">
       <div className="flex flex-wrap items-end gap-4">
         <div className="mr-auto">
-          <h2 className="display text-2xl md:text-3xl font-extrabold">Pilih Game Favoritmu</h2>
-          <p className="text-sm text-slate-500 mt-1">Top up cepat, aman, dan terpercaya.</p>
+          <h2 className="display text-2xl md:text-3xl font-extrabold">{heading.title}</h2>
+          <p className="text-sm text-slate-500 mt-1">{heading.subtitle}</p>
         </div>
       </div>
 
@@ -59,7 +66,7 @@ export function GameShowcase({ games, categories }: GameShowcaseProps) {
         })}
         <button
           type="button"
-          onClick={() => setFilter("all")}
+          onClick={() => setFilter(ALL_CATEGORIES)}
           className="ml-auto hidden sm:inline-flex items-center gap-1 text-xs font-bold text-blue-600 whitespace-nowrap"
         >
           Lihat Semua

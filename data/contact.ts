@@ -1,25 +1,17 @@
-/**
- * DATA KONTAK — masih kosong karena HTML asli tidak punya nomor/link apa pun.
- * `email` dan `phone` otomatis dipakai di JSON-LD Organization begitu diisi.
- * `whatsapp` belum tersambung ke UI mana pun (lihat catatan di ringkasan).
- */
-export const CONTACT = {
-  /** contoh: "6281234567890" (format internasional tanpa tanda +) */
-  whatsapp: null as string | null,
-  /** contoh: "cs@juegova.net" */
-  email: null as string | null,
-  /** contoh: "+62 812-3456-7890" */
-  phone: null as string | null,
-} as const;
+import type { ContactSettings, SocialLink } from "@/types";
 
-export interface SocialLink {
-  /** Huruf pendek yang tampil di bulatan footer, sama seperti HTML asli. */
-  short: string;
-  /** Nama platform, dipakai untuk aria-label/title. */
-  label: string;
-  /** URL profil. Null = daftar sosial belum tersedia. */
-  url: string | null;
-}
+/**
+ * Nilai awal data kontak. HTML asli tidak punya nomor/link apa pun,
+ * jadi semuanya kosong sampai diisi dari dashboard admin.
+ */
+export const CONTACT: ContactSettings = {
+  /** contoh: "6281234567890" (format internasional tanpa tanda +) */
+  whatsapp: null,
+  /** contoh: "cs@juegova.net" */
+  email: null,
+  /** contoh: "+62 812-3456-7890" */
+  phone: null,
+};
 
 export const SOCIAL_LINKS: SocialLink[] = [
   { short: "f", label: "Facebook", url: null },

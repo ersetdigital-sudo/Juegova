@@ -1,9 +1,8 @@
 import Image from "next/image";
 import { Icon } from "@/components/ui/Icon";
-import { GAME_BADGES } from "@/data/games";
-import type { Game } from "@/types";
+import type { Badge, Game } from "@/types";
 
-export function GameBanner({ game }: { game: Game }) {
+export function GameBanner({ game, badges }: { game: Game; badges: Badge[] }) {
   return (
     <section className="mt-3 rounded-3xl overflow-hidden relative glow bg-slate-900 min-h-[220px] md:min-h-[260px]">
       <Image
@@ -33,7 +32,7 @@ export function GameBanner({ game }: { game: Game }) {
           </h1>
           <p className="text-sm text-slate-300 mt-1">{game.publisher}</p>
           <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-bold">
-            {GAME_BADGES.map((badge) => (
+            {badges.map((badge) => (
               <span
                 key={badge.label}
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 border border-white/25 text-white"

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getAllGames, getGamePath } from "@/lib/games";
+import { getGamePath } from "@/lib/games";
+import type { Game } from "@/types";
 
 /**
  * Jumlah salinan track. Harus sama dengan pembagi di @keyframes marquee (app/globals.css),
@@ -7,8 +8,8 @@ import { getAllGames, getGamePath } from "@/lib/games";
  */
 const TRACK_COPIES = 4;
 
-export function PopularMarquee() {
-  const games = getAllGames();
+export function PopularMarquee({ games }: { games: Game[] }) {
+  if (games.length === 0) return null;
 
   const run = games.map((game) => (
     <span key={game.id} className="flex items-center">

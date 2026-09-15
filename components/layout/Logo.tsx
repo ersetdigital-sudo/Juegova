@@ -28,17 +28,24 @@ export function LogoMark({ gradientId }: LogoMarkProps) {
 }
 
 interface LogoProps {
+  /** Nama brand dari pengaturan admin — 2 huruf terakhir otomatis diberi warna aksen. */
+  name: string;
   gradientId: string;
   /** Tanpa link, dipakai di dalam elemen yang sudah berupa link. */
   asLink?: boolean;
 }
 
-export function Logo({ gradientId, asLink = true }: LogoProps) {
+export function Logo({ name, gradientId, asLink = true }: LogoProps) {
+  const hasAccent = name.length > 2;
+  const head = hasAccent ? name.slice(0, -2) : name;
+  const accent = hasAccent ? name.slice(-2) : "";
+
   const content = (
     <>
       <LogoMark gradientId={gradientId} />
       <span className="display text-xl font-extrabold tracking-[-.02em]">
-        Juego<span className="text-blue-600">va</span>
+        {head}
+        {accent ? <span className="text-blue-600">{accent}</span> : null}
       </span>
     </>
   );
@@ -48,7 +55,11 @@ export function Logo({ gradientId, asLink = true }: LogoProps) {
   }
 
   return (
-    <Link href="/" className="flex items-center gap-2 shrink-0" aria-label="Juegova — beranda">
+    <Link
+      href="/"
+      className="flex items-center gap-2 shrink-0"
+      aria-label={`${name} — beranda`}
+    >
       {content}
     </Link>
   );

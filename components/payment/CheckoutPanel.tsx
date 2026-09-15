@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CheckIcon } from "@/components/ui/Icon";
 import { TrustList } from "@/components/ui/TrustList";
-import { PAYMENT_TRUST_ITEMS } from "@/data/testimonials";
 import { formatRupiah } from "@/lib/format";
 import type { PaymentInstruction } from "@/lib/payment-instructions";
 import type { OrderPricing } from "@/lib/pricing";
+import type { TrustItem } from "@/types";
 import { OrderDetails } from "./OrderDetails";
 import { PaymentInstructions } from "./PaymentInstructions";
 
@@ -23,6 +23,7 @@ interface CheckoutPanelProps {
   orderedAt: string;
   pricing: OrderPricing;
   instruction: PaymentInstruction;
+  trustItems: TrustItem[];
 }
 
 export function CheckoutPanel({
@@ -34,6 +35,7 @@ export function CheckoutPanel({
   orderedAt,
   pricing,
   instruction,
+  trustItems,
 }: CheckoutPanelProps) {
   const [deadline] = useState(() => Date.now() + COUNTDOWN_SECONDS * 1000);
   const [remaining, setRemaining] = useState(COUNTDOWN_SECONDS);
@@ -97,7 +99,7 @@ export function CheckoutPanel({
           />
 
           <div className="rounded-2xl bg-slate-50 border border-slate-200 p-4 text-[12px] text-slate-600 space-y-1.5">
-            <TrustList items={PAYMENT_TRUST_ITEMS} />
+            <TrustList items={trustItems} />
           </div>
         </div>
 

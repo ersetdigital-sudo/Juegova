@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { BoltIcon } from "@/components/ui/Icon";
-import { SOCIAL_LINKS } from "@/data/contact";
-import { FOOTER_ABOUT, FOOTER_MENU } from "@/data/navigation";
 import { cx } from "@/lib/cx";
-import { siteConfig } from "@/lib/site";
+import type { NavigationContent, SiteSettings } from "@/types";
 import { Logo } from "./Logo";
 import { NewsletterForm } from "./NewsletterForm";
 
@@ -11,11 +9,13 @@ const SOCIAL_CLASS =
   "w-7 h-7 rounded-full bg-white border border-slate-200 flex items-center justify-center";
 
 interface SiteFooterProps {
+  settings: SiteSettings;
+  navigation: NavigationContent;
   /** full = beranda (4 kolom), compact = halaman game & pembayaran. */
   variant?: "full" | "compact";
 }
 
-function BottomBar({ compact }: { compact: boolean }) {
+function BottomBar({ settings, compact }: { settings: SiteSettings; compact: boolean }) {
   const bar = (
     <div
       className={cx(
@@ -24,10 +24,10 @@ function BottomBar({ compact }: { compact: boolean }) {
       )}
     >
       <p>
-        © {new Date().getFullYear()} {siteConfig.legalName}. Semua hak dilindungi undang-undang.
+        © {new Date().getFullYear()} {settings.legalName}. Semua hak dilindungi undang-undang.
       </p>
       <p className="scribble inline-flex items-center gap-1.5 text-sm text-blue-600">
-        {siteConfig.footerNote}
+        {settings.footerNote}
         <BoltIcon className="w-4 h-4" />
       </p>
     </div>
@@ -37,11 +37,11 @@ function BottomBar({ compact }: { compact: boolean }) {
   return <div className="border-t border-slate-200">{bar}</div>;
 }
 
-export function SiteFooter({ variant = "full" }: SiteFooterProps) {
+export function SiteFooter({ settings, navigation, variant = "full" }: SiteFooterProps) {
   if (variant === "compact") {
     return (
       <footer className="bg-slate-50 border-t border-slate-200">
-        <BottomBar compact />
+        <BottomBar settings={settings} compact />
       </footer>
     );
   }
@@ -50,8 +50,8 @@ export function SiteFooter({ variant = "full" }: SiteFooterProps) {
     <footer id="bantuan" className="mt-14 bg-slate-50 border-t border-slate-200">
       <div className="max-w-[1280px] mx-auto px-4 lg:px-6 py-10 grid md:grid-cols-4 gap-8">
         <div>
-          <Logo gradientId="logo-footer" asLink={false} />
-          <p className="mt-3 text-xs text-slate-500">{siteConfig.tagline}.</p>
+          <Logo name={settings.name} gradientId="logo-footer" asLink={false} />
+          <p className="mt-3 text-xs text-slate-500">{settings.tagline}.</p>
         </div>
 
         <div>
@@ -65,7 +65,7 @@ export function SiteFooter({ variant = "full" }: SiteFooterProps) {
         <div>
           <p className="text-sm font-extrabold">Menu</p>
           <ul className="mt-3 space-y-1.5 text-xs text-slate-500">
-            {FOOTER_MENU.map((item) => (
+            {navigation.footerMenu.map((item) => (
               <li key={item.label}>
                 <Link href={item.href} className="hover:text-blue-600">
                   {item.label}
@@ -78,7 +78,7 @@ export function SiteFooter({ variant = "full" }: SiteFooterProps) {
         <div>
           <p className="text-sm font-extrabold">Tentang Kami</p>
           <ul className="mt-3 space-y-1.5 text-xs text-slate-500">
-            {FOOTER_ABOUT.map((item) => (
+            {navigation.footerAbout.map((item) => (
               <li key={item.label}>
                 <Link href={item.href} className="hover:text-blue-600">
                   {item.label}
@@ -89,7 +89,7 @@ export function SiteFooter({ variant = "full" }: SiteFooterProps) {
 
           <p className="mt-4 text-sm font-extrabold">Ikuti Kami</p>
           <div className="mt-2 flex gap-2 text-slate-500 text-xs font-bold">
-            {SOCIAL_LINKS.map((social) =>
+            {settings.socials.map((social) =>
               social.url ? (
                 <a
                   key={social.short}
@@ -102,18 +102,18 @@ export function SiteFooter({ variant = "full" }: SiteFooterProps) {
                   {social.short}
                 </a>
               ) : (
-                // URL profil belum tersedia — HTML asli juga hanya menampilkan bulatan ini.
+                // URL profil belum diisi, jadi ditampilkan sebagai ikon mati.
                 <span key={social.short} title={social.label} className={SOCIAL_CLASS}>
                   {social.short}
                 </span>
               ),
             )}
           </div>
-          <p className="scribble mt-3 text-blue-600 text-base">{siteConfig.slogan}</p>
+          <p className="scribble mt-3 text-blue-600 text-base">{settings.slogan}</p>
         </div>
       </div>
 
-      <BottomBar compact={false} />
+      <BottomBar settings={settings} compact={false} />
     </footer>
   );
 }

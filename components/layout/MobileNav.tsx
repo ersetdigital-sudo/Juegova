@@ -2,20 +2,21 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { HEADER_NAV } from "@/data/navigation";
 import { cx } from "@/lib/cx";
-import type { NavId } from "@/types";
+import type { Game, NavItem } from "@/types";
 import { GameSearch } from "./GameSearch";
 
 interface MobileNavProps {
-  active?: NavId | null;
+  nav: NavItem[];
+  games: Game[];
+  active?: string | null;
 }
 
 /**
  * Menu navigasi khusus mobile — di HTML asli nav utama disembunyikan di bawah `lg`
  * dan tidak ada penggantinya, jadi halaman tidak bisa dinavigasi dari HP.
  */
-export function MobileNav({ active = null }: MobileNavProps) {
+export function MobileNav({ nav, games, active = null }: MobileNavProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -50,9 +51,9 @@ export function MobileNav({ active = null }: MobileNavProps) {
           id="mobile-nav"
           className="absolute left-0 right-0 top-full bg-white border-b border-slate-200 shadow-lg px-4 py-4 space-y-4"
         >
-          <GameSearch variant="mobile" />
+          <GameSearch games={games} variant="mobile" />
           <nav className="flex flex-col text-sm font-semibold">
-            {HEADER_NAV.map((item) => (
+            {nav.map((item) => (
               <Link
                 key={item.id}
                 href={item.href}

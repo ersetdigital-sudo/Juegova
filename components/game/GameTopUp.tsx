@@ -5,9 +5,8 @@ import { useState } from "react";
 import { InfoIcon } from "@/components/ui/Icon";
 import { TrustList } from "@/components/ui/TrustList";
 import { PAYMENT_METHODS } from "@/data/payments";
-import { TRUST_ITEMS } from "@/data/testimonials";
 import { formatRupiah } from "@/lib/format";
-import type { Game } from "@/types";
+import type { Game, GameReview, SiteRating, TrustItem } from "@/types";
 import { GameInfo } from "./GameInfo";
 import { GameReviews } from "./GameReviews";
 import { NominalPicker } from "./NominalPicker";
@@ -18,7 +17,15 @@ import { StepCard } from "./StepCard";
 const INPUT_CLASS =
   "mt-1 w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-300";
 
-export function GameTopUp({ game }: { game: Game }) {
+interface GameTopUpProps {
+  game: Game;
+  steps: string[];
+  reviews: GameReview[];
+  rating: SiteRating;
+  trustItems: TrustItem[];
+}
+
+export function GameTopUp({ game, steps, reviews, rating, trustItems }: GameTopUpProps) {
   const router = useRouter();
   const [userId, setUserId] = useState("");
   const [zone, setZone] = useState("");
@@ -123,8 +130,8 @@ export function GameTopUp({ game }: { game: Game }) {
           />
         </StepCard>
 
-        <GameInfo game={game} />
-        <GameReviews />
+        <GameInfo game={game} steps={steps} />
+        <GameReviews reviews={reviews} rating={rating} />
       </div>
 
       <aside className="lg:sticky lg:top-24">
@@ -139,7 +146,7 @@ export function GameTopUp({ game }: { game: Game }) {
         />
 
         <div className="mt-4 rounded-2xl border border-slate-200 p-4 text-[11px] text-slate-600 space-y-2">
-          <TrustList items={TRUST_ITEMS} />
+          <TrustList items={trustItems} />
         </div>
       </aside>
     </div>

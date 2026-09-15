@@ -4,16 +4,16 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cx } from "@/lib/cx";
-import { getAllGames, getGamePath } from "@/lib/games";
-
-const GAMES = getAllGames();
+import { getGamePath } from "@/lib/games";
+import type { Game } from "@/types";
 
 interface GameSearchProps {
+  games: Game[];
   /** desktop = kolom di header, mobile = kolom di dalam menu mobile. */
   variant?: "desktop" | "mobile";
 }
 
-export function GameSearch({ variant = "desktop" }: GameSearchProps) {
+export function GameSearch({ games, variant = "desktop" }: GameSearchProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -22,13 +22,13 @@ export function GameSearch({ variant = "desktop" }: GameSearchProps) {
 
   const results = useMemo(() => {
     const term = query.trim().toLowerCase();
-    if (!term) return GAMES;
-    return GAMES.filter((game) =>
+    if (!term) return games;
+    return games.filter((game) =>
       `${game.name} ${game.cardTitle} ${game.publisher} ${game.currency}`
         .toLowerCase()
         .includes(term),
     );
-  }, [query]);
+  }, [games, query]);
 
   // Badge "Ctrl K" di HTML asli cuma hiasan — di sini benar-benar berfungsi.
   useEffect(() => {

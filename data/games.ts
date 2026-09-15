@@ -181,9 +181,6 @@ export const GAMES: Game[] = [
   },
 ];
 
-/** Game default kalau parameter tidak dikenali — sama seperti perilaku HTML asli. */
-export const DEFAULT_GAME_ID = "mobile-legends";
-
 /** Langkah "Cara Top Up" yang tampil di semua halaman game. */
 export const TOP_UP_STEPS = [
   "Masukkan User ID (dan Server) akun kamu.",

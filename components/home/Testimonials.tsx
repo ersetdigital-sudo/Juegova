@@ -3,18 +3,26 @@ import { Avatar } from "@/components/ui/Avatar";
 import { ArrowRightIcon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { Stars } from "@/components/ui/Stars";
-import { TESTIMONIALS, TESTIMONIALS_HREF } from "@/data/testimonials";
+import type { SectionCopy, Testimonial } from "@/types";
 
-export function Testimonials() {
+interface TestimonialsProps {
+  testimonials: Testimonial[];
+  href: string;
+  heading: SectionCopy;
+}
+
+export function Testimonials({ testimonials, href, heading }: TestimonialsProps) {
+  if (testimonials.length === 0) return null;
+
   return (
     <div>
       <div className="flex items-end gap-3">
         <div className="mr-auto">
-          <h2 className="display text-2xl md:text-3xl font-extrabold">Apa Kata Mereka?</h2>
-          <p className="text-sm text-slate-500 mt-1">Ribuan gamers sudah mempercayai Juegova.</p>
+          <h2 className="display text-2xl md:text-3xl font-extrabold">{heading.title}</h2>
+          <p className="text-sm text-slate-500 mt-1">{heading.subtitle}</p>
         </div>
         <Link
-          href={TESTIMONIALS_HREF}
+          href={href}
           className="inline-flex items-center gap-1 text-xs font-bold text-blue-600 whitespace-nowrap"
         >
           Lihat Semua
@@ -23,8 +31,8 @@ export function Testimonials() {
       </div>
 
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-5">
-        {TESTIMONIALS.map((testimonial, index) => (
-          <Reveal key={testimonial.name} delay={index * 0.08}>
+        {testimonials.map((testimonial, index) => (
+          <Reveal key={`${testimonial.name}-${index}`} delay={index * 0.08}>
             <div className="rounded-2xl border border-slate-200 p-5 h-full">
               <div className="flex items-center gap-2">
                 <Avatar initials={testimonial.initials} accent={testimonial.accent} />

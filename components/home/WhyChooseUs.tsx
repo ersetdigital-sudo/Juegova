@@ -1,8 +1,7 @@
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
-import { FEATURES } from "@/data/features";
 import { cx } from "@/lib/cx";
-import type { Feature } from "@/types";
+import type { Feature, SectionCopy } from "@/types";
 
 const CARD_VARIANT: Record<Feature["variant"], { card: string; icon: string }> = {
   slate: { card: "bg-slate-50 border-slate-200", icon: "grad" },
@@ -16,19 +15,19 @@ const CARD_VARIANT: Record<Feature["variant"], { card: string; icon: string }> =
   },
 };
 
-export function WhyChooseUs() {
+export function WhyChooseUs({ features, heading }: { features: Feature[]; heading: SectionCopy }) {
+  if (features.length === 0) return null;
+
   return (
     <div>
-      <h2 className="display text-2xl md:text-3xl font-extrabold">Kenapa Pilih Juegova?</h2>
-      <p className="text-sm text-slate-500 mt-1">
-        Lebih dari sekadar top up, ini adalah pengalaman terbaik buat gamers.
-      </p>
+      <h2 className="display text-2xl md:text-3xl font-extrabold">{heading.title}</h2>
+      <p className="text-sm text-slate-500 mt-1">{heading.subtitle}</p>
 
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-5">
-        {FEATURES.map((feature, index) => {
+        {features.map((feature, index) => {
           const variant = CARD_VARIANT[feature.variant];
           return (
-            <Reveal key={feature.title} delay={index * 0.08}>
+            <Reveal key={`${feature.title}-${index}`} delay={index * 0.08}>
               <div className={cx("rounded-2xl border p-6 h-full", variant.card)}>
                 <div
                   className={cx(

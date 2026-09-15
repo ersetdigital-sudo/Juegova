@@ -1,48 +1,47 @@
-import { CONTACT, SOCIAL_LINKS } from "@/data/contact";
-import { GAME_CATEGORIES } from "@/data/games";
-import { GAME_REVIEWS, SITE_RATING } from "@/data/testimonials";
 import { getGamePath, getPriceRange } from "@/lib/games";
-import { absoluteUrl, siteConfig } from "@/lib/site";
-import type { Game } from "@/types";
+import { absoluteUrl } from "@/lib/site";
+import type { Game, GameReview, SiteContent, SiteRating } from "@/types";
 
 type JsonLd = Record<string, unknown>;
 
-const socialProfiles = () =>
-  SOCIAL_LINKS.map((social) => social.url).filter((url): url is string => Boolean(url));
+export function organizationJsonLd(content: SiteContent): JsonLd {
+  const { settings } = content;
+  const profiles = settings.socials
+    .map((social) => social.url)
+    .filter((url): url is string => Boolean(url));
 
-export function organizationJsonLd(): JsonLd {
-  const profiles = socialProfiles();
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: siteConfig.name,
-    legalName: siteConfig.legalName,
-    url: siteConfig.url,
-    description: siteConfig.description,
-    slogan: siteConfig.slogan,
+    name: settings.name,
+    legalName: settings.legalName,
+    url: absoluteUrl("/"),
+    description: settings.description,
+    slogan: settings.slogan,
     ...(profiles.length > 0 ? { sameAs: profiles } : {}),
-    ...(CONTACT.email ? { email: CONTACT.email } : {}),
-    ...(CONTACT.phone ? { telephone: CONTACT.phone } : {}),
+    ...(settings.contact.email ? { email: settings.contact.email } : {}),
+    ...(settings.contact.phone ? { telephone: settings.contact.phone } : {}),
   };
 }
 
-export function websiteJsonLd(): JsonLd {
+export function websiteJsonLd(content: SiteContent): JsonLd {
+  const { settings } = content;
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: siteConfig.name,
-    url: siteConfig.url,
-    description: siteConfig.description,
-    inLanguage: siteConfig.lang,
-    publisher: { "@type": "Organization", name: siteConfig.name, url: siteConfig.url },
+    name: settings.name,
+    url: absoluteUrl("/"),
+    description: settings.description,
+    inLanguage: "id",
+    publisher: { "@type": "Organization", name: settings.name, url: absoluteUrl("/") },
   };
 }
 
-export function gameListJsonLd(games: Game[]): JsonLd {
+export function gameListJsonLd(games: Game[], siteName: string): JsonLd {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Daftar game yang bisa di-top-up di Juegova",
+    name: `Daftar game yang bisa di-top-up di ${siteName}`,
     itemListElement: games.map((game, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -65,9 +64,16 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[]): JsonL
   };
 }
 
-export function productJsonLd(game: Game): JsonLd {
+interface ProductJsonLdOptions {
+  game: Game;
+  rating: SiteRating;
+  reviews: GameReview[];
+  /** Label kategori untuk properti `category`, opsional. */
+  categoryLabel?: string;
+}
+
+export function productJsonLd({ game, rating, reviews, categoryLabel }: ProductJsonLdOptions): JsonLd {
   const { low, high } = getPriceRange(game);
-  const category = GAME_CATEGORIES.find((entry) => entry.id === game.category)?.label;
 
   return {
     "@context": "https://schema.org",
@@ -78,15 +84,15 @@ export function productJsonLd(game: Game): JsonLd {
     url: absoluteUrl(getGamePath(game.id)),
     sku: game.id,
     brand: { "@type": "Brand", name: game.publisher },
-    ...(category ? { category } : {}),
+    ...(categoryLabel ? { category: categoryLabel } : {}),
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: SITE_RATING.value,
-      reviewCount: SITE_RATING.count,
+      ratingValue: rating.value,
+      reviewCount: rating.count,
       bestRating: 5,
       worstRating: 1,
     },
-    review: GAME_REVIEWS.map((review) => ({
+    review: reviews.map((review) => ({
       "@type": "Review",
       author: { "@type": "Person", name: review.name },
       reviewRating: { "@type": "Rating", ratingValue: 5, bestRating: 5, worstRating: 1 },

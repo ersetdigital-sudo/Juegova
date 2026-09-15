@@ -1,7 +1,5 @@
-export type GameCategoryId = "moba" | "rpg" | "battle-royale" | "shooter" | "casual";
-
 export interface GameCategory {
-  id: GameCategoryId;
+  id: string;
   label: string;
 }
 
@@ -20,7 +18,7 @@ export interface Game {
   cardTitle: string;
   publisher: string;
   currency: string;
-  category: GameCategoryId;
+  category: string;
   image: string;
   imageWidth: number;
   imageHeight: number;
@@ -88,10 +86,9 @@ export interface Badge {
   label: string;
 }
 
-export type NavId = "beranda" | "kategori" | "promo" | "bantuan";
-
 export interface NavItem {
-  id: NavId;
+  /** Slug unik untuk menandai menu yang sedang aktif, contoh: "beranda". */
+  id: string;
   label: string;
   href: string;
 }
@@ -110,4 +107,82 @@ export interface TrustItem {
 export interface SiteRating {
   value: number;
   count: number;
+}
+
+export interface SocialLink {
+  /** Huruf pendek yang tampil di bulatan footer, contoh: "ig". */
+  short: string;
+  label: string;
+  /** Null = platform ini belum punya URL, jadi ditampilkan sebagai ikon mati. */
+  url: string | null;
+}
+
+export interface ContactSettings {
+  whatsapp: string | null;
+  email: string | null;
+  phone: string | null;
+}
+
+/** Semua yang bisa diubah dari dashboard admin. */
+export interface SiteSettings {
+  name: string;
+  legalName: string;
+  tagline: string;
+  description: string;
+  slogan: string;
+  footerNote: string;
+  themeColor: string;
+  ogImage: string;
+  twitterHandle: string | null;
+  contact: ContactSettings;
+  socials: SocialLink[];
+}
+
+export interface NavigationContent {
+  header: NavItem[];
+  footerMenu: LinkItem[];
+  footerAbout: LinkItem[];
+}
+
+export interface SectionCopy {
+  title: string;
+  subtitle: string;
+}
+
+/** Judul & subjudul section di beranda. */
+export interface SectionHeadings {
+  catalog: SectionCopy;
+  features: SectionCopy;
+  /** href = tujuan link "Lihat Semua" di bagian ulasan. */
+  testimonials: SectionCopy & { href: string };
+}
+
+/**
+ * Seluruh isi situs sebagai satu dokumen. Disimpan utuh (bukan per tabel) supaya
+ * backend penyimpanan bisa diganti tanpa menyentuh kode halaman.
+ */
+export interface SiteContent {
+  settings: SiteSettings;
+  navigation: NavigationContent;
+  sections: SectionHeadings;
+  categories: GameCategory[];
+  games: Game[];
+  heroSlides: HeroSlide[];
+  badges: Badge[];
+  topUpSteps: string[];
+  features: Feature[];
+  trustItems: TrustItem[];
+  paymentTrustItems: TrustItem[];
+  testimonials: Testimonial[];
+  gameReviews: GameReview[];
+  rating: SiteRating;
+}
+
+/** Dari mana konten terakhir dibaca — ditampilkan di dashboard admin. */
+export type StorageDriver = "supabase" | "file" | "default";
+
+/** Hasil operasi simpan/ubah dari dashboard admin. */
+export interface ActionResult {
+  ok: boolean;
+  message: string;
 }

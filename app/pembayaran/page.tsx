@@ -1,19 +1,25 @@
+import type { Metadata } from "next";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { CheckoutPanel } from "@/components/payment/CheckoutPanel";
 import { CheckoutStepper } from "@/components/payment/CheckoutStepper";
 import { DEFAULT_PAYMENT_NAME, PAYMENT_METHODS } from "@/data/payments";
+import { getSiteContent } from "@/lib/content/store";
 import { formatDateTime } from "@/lib/format";
 import { createMetadata } from "@/lib/metadata";
 import { buildPaymentInstruction } from "@/lib/payment-instructions";
 import { calculatePricing } from "@/lib/pricing";
 
-export const metadata = createMetadata({
-  title: "Pembayaran",
-  description: "Selesaikan pembayaran top up game kamu di Juegova.",
-  path: "/pembayaran",
-  noIndex: true,
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await getSiteContent();
+  return createMetadata({
+    settings,
+    title: "Pembayaran",
+    description: `Selesaikan pembayaran top up game kamu di ${settings.name}.`,
+    path: "/pembayaran",
+    noIndex: true,
+  });
+}
 
 interface PaymentPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -24,6 +30,7 @@ const first = (value: string | string[] | undefined) =>
 
 export default async function PaymentPage({ searchParams }: PaymentPageProps) {
   const params = await searchParams;
+  const content = await getSiteContent();
 
   const game = first(params.game) ?? "Mobile Legends: Bang Bang";
   const item = first(params.item) ?? "86 Diamond";
@@ -48,7 +55,7 @@ export default async function PaymentPage({ searchParams }: PaymentPageProps) {
 
   return (
     <>
-      <SiteHeader />
+      <SiteHeader settings={content.settings} nav={content.navigation.header} games={content.games} />
 
       <main className="max-w-[1000px] mx-auto px-4 lg:px-6 pb-16">
         <h1 className="sr-only">Pembayaran Pesanan Top Up</h1>
@@ -62,10 +69,11 @@ export default async function PaymentPage({ searchParams }: PaymentPageProps) {
           orderedAt={formatDateTime(now)}
           pricing={pricing}
           instruction={instruction}
+          trustItems={content.paymentTrustItems}
         />
       </main>
 
-      <SiteFooter variant="compact" />
+      <SiteFooter settings={content.settings} navigation={content.navigation} variant="compact" />
     </>
   );
 }

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { absoluteUrl, siteConfig } from "@/lib/site";
+import { absoluteUrl, siteUrl } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -7,10 +7,11 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/pembayaran"],
+        // Halaman transaksi dan dashboard admin tidak boleh diindeks.
+        disallow: ["/pembayaran", "/admin"],
       },
     ],
     sitemap: absoluteUrl("/sitemap.xml"),
-    host: siteConfig.url,
+    host: siteUrl,
   };
 }
