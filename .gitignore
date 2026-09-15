@@ -22,6 +22,7 @@ next-env.d.ts
 .commandcode/
 .vscode/
 .idea/
+.vercel/
 
 # Sumber statis asli (HTML + aset mentah) — hanya referensi lokal, tidak ikut repo.
 # Aset yang dipakai aplikasi ada di public/ dalam bentuk WebP yang sudah dioptimasi.
