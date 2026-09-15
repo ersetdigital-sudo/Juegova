@@ -39,12 +39,13 @@ This repository is a **migration from a hand-written static site** — three sta
 
 ## Data model
 
-Four tables. Catalog and orders are **relational**, because they are operational data: you want to query a price, sort orders, or fix a row directly in the Supabase table editor. Presentation content is a **single JSON document**, because nobody queries "all testimonials where…" and it keeps that part of the admin model-free.
+Five tables. Catalog, payment methods and orders are **relational**, because they are operational data: you want to query a price, sort orders, toggle a payment method, or fix a row directly in the Supabase table editor. Presentation content is a **single JSON document**, because nobody queries "all testimonials where…" and it keeps that part of the admin model-free.
 
 | Table | Rows | Purpose |
 | --- | --- | --- |
 | `games` | 1 per game | name, publisher, category, artwork, ID hint, description, order |
 | `game_items` | 1 per denomination | `game_id` → games, label, price, order |
+| `payment_methods` | 1 per method | name, type (`qris` / `transfer`), QRIS image, account number, instructions, active flag |
 | `orders` | 1 per order | invoice, game, item, account, payment method, totals, status |
 | `site_content` | 1 row (`id = 'main'`) | JSON: brand settings, banners, testimonials, features, navigation |
 
@@ -73,9 +74,24 @@ create table public.orders (
   id uuid primary key default gen_random_uuid(),
   invoice text not null unique, game_id text, game_name text not null,
   item_label text not null, account_id text not null, payment_method text not null,
+  payment_method_id uuid references public.payment_methods(id) on delete set null,
   subtotal integer not null, fee integer not null default 0,
   discount integer not null default 0, total integer not null,
   status text not null default 'menunggu',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table public.payment_methods (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  type text not null default 'transfer' check (type in ('qris','transfer')),
+  account_label text not null default 'Nomor Tujuan',
+  account_number text, account_name text,
+  qr_image text, logo text,
+  instructions jsonb not null default '[]'::jsonb,
+  is_active boolean not null default true,
+  sort_order int not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -85,15 +101,16 @@ create table public.site_content (
   updated_at timestamptz not null default now()
 );
 
-alter table public.games       enable row level security;
-alter table public.game_items  enable row level security;
-alter table public.orders      enable row level security;
-alter table public.site_content enable row level security;
+alter table public.games           enable row level security;
+alter table public.game_items      enable row level security;
+alter table public.payment_methods enable row level security;
+alter table public.orders          enable row level security;
+alter table public.site_content    enable row level security;
 
-revoke all on public.games, public.game_items, public.orders, public.site_content
-  from anon, authenticated;
-grant all on public.games, public.game_items, public.orders, public.site_content
-  to service_role;
+revoke all on public.games, public.game_items, public.payment_methods,
+  public.orders, public.site_content from anon, authenticated;
+grant all on public.games, public.game_items, public.payment_methods,
+  public.orders, public.site_content to service_role;
 ```
 
 **Access is server-only.** RLS is on, `anon` and `authenticated` are revoked, and only `service_role` is granted. The publishable key — the only key safe to ship to a browser — gets `401` on both read and write.
@@ -130,13 +147,31 @@ Available at `/admin`. What can be managed:
 | Section | What it controls |
 | --- | --- |
 | **Pesanan** | Orders with filters per status, revenue total, per-order detail and status changes. |
-| **Katalog & Harga** | Games and every denomination/price. Add, reorder or delete games and price tiers. |
-| **Banner Hero** | The home page slider — image, alt text, link and order. |
+| **Katalog & Harga** | Games and every denomination/price. Add, reorder or delete games and price tiers. Upload cover art. |
+| **Pembayaran** | Payment methods: upload the QRIS image, set account numbers, write instructions, reorder, activate/deactivate. |
+| **Banner Hero** | The home page slider — image upload, alt text, link and order. |
 | **Ulasan** | Overall rating, home testimonials, game-page reviews. |
 | **Keunggulan** | Feature cards, banner badges, guarantee points, top-up steps. |
 | **Identitas & Navigasi** | Brand name, tagline, description, contact, social links, section headings, categories, both menus. |
 
 Saves are recursive merges, so a form submits only its own slice and cannot wipe sibling data. Every save revalidates the content cache, so public pages update on the next request while game pages stay statically generated.
+
+### Payments
+
+Payment methods are fully data-driven — nothing about them lives in code.
+
+- Each method is either **QRIS** (shows the uploaded QR image) or **Transfer Bank / E-Wallet** (shows an account number with a copy button). A third shape falls out of that: set `accountLabel` to something like "Kode Pembayaran Alfamart" and a retail code behaves like a transfer.
+- The admin uploads the QRIS image straight from the dashboard, fills the account number and holder name, writes custom "how to pay" steps (or leaves them empty to use generated defaults), and toggles the method on or off.
+- **Only active methods reach the buyer**, and an active method with missing data is disabled automatically on save rather than being allowed to break the checkout. The dashboard says which ones that happened to.
+- Orders reference the method by id, and the name is stored as a snapshot, so renaming or deleting a method never corrupts an old order.
+
+### Image uploads
+
+QRIS codes, hero banners and game covers are uploaded from the dashboard to **Cloudinary** using an unsigned upload preset — the browser posts straight to Cloudinary, so files never pass through the serverless function.
+
+Because the preset is unsigned, the API secret is not used anywhere in the app and is deliberately not stored. Uploads are limited to PNG/JPG/WebP and 2 MB, validated in the browser before anything is sent. Cloudinary assigns a random public id, so the resulting URLs are not guessable.
+
+Uploading a banner or game cover also fills in the image's width and height automatically, which is what keeps `next/image` from causing layout shift.
 
 ### Admin login
 
@@ -242,6 +277,8 @@ npm run typecheck  # tsc --noEmit
 | `ADMIN_SESSION_SECRET` | derived from `ADMIN_PASSWORD` | Set it to invalidate existing sessions without changing the password. |
 | `SUPABASE_URL` | *(unset — file storage)* | Switches content and catalog storage to Postgres. |
 | `SUPABASE_SERVICE_ROLE_KEY` | *(unset)* | Service role key or `sb_secret_…` key. Server-side only. |
+| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | *(unset)* | Cloudinary cloud for dashboard image uploads. |
+| `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET` | *(unset)* | An **unsigned** upload preset. No API secret needed. |
 
 ## Project structure
 
@@ -258,11 +295,13 @@ app/
   not-found.tsx             branded 404
 components/
   layout/ home/ game/ payment/   public UI
-  admin/                    form primitives, list editors, game editor, order status
+  admin/                    form primitives, list editors, image upload,
+                            game editor, payment editor, order status
   ui/                       icon set, reveal, avatar, stars, JSON-LD
 data/                       typed default content (seed)
 lib/
   content/                  content store, catalog store, backend config
+  payments/                 payment method store + client-safe helpers
   orders/                   order store, statuses, checkout actions
   admin/                    auth helpers
   ...                       site config, metadata, JSON-LD, pricing
@@ -272,7 +311,7 @@ middleware.ts               legacy /game?id= → /game/[slug] redirect
 
 ## Placeholders & roadmap
 
-- **Payment gateway.** The QR is a deterministic decorative pattern, not a scannable code, and the virtual account numbers are generated client-side. Orders are recorded and statuses are managed manually until a gateway is wired up.
+- **Payment gateway.** QRIS codes and account numbers are real and uploaded by the admin, but nothing verifies a payment automatically — orders are recorded and statuses are managed manually.
 - **Customer accounts.** The Login and Register buttons in the header are still inert; orders are not tied to a user.
 - **Newsletter.** The form reports success locally; no endpoint is wired up.
 - **WhatsApp.** The dashboard can store a support number, but nothing on the site links to it yet.
