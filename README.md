@@ -79,8 +79,11 @@ create table if not exists site_content (
 
 ```bash
 SUPABASE_URL=https://xxxx.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=...   # server-side only
+# Service role key. Bisa JWT lama (service_role) atau secret key baru (sb_secret_...).
+SUPABASE_SERVICE_ROLE_KEY=...
 ```
+
+The table is locked down: RLS is enabled, access for `anon` and `authenticated` is revoked, and only `service_role` is granted — so the publishable key cannot read or write the content.
 
 ### Admin login
 
